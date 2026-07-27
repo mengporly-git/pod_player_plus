@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pod_player/pod_player.dart';
+import 'package:pod_player_plus/pod_player_plus.dart';
 
 void main(List<String> args) {
   PodVideoPlayer.enableLogs = true;
@@ -7,74 +7,98 @@ void main(List<String> args) {
 }
 
 class ListOfVideosApp extends StatelessWidget {
-  const ListOfVideosApp({Key? key}) : super(key: key);
+  const ListOfVideosApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(title: const Text("Play List of Videos")),
-        body: Builder(builder: (context) {
-          return Center(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                ElevatedButton(
+        body: Builder(
+          builder: (context) {
+            return Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  ElevatedButton(
                     child: const Text('List of Asset videos'),
                     onPressed: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => ListOfVideosScreen(
-                          videosList: [
-                            PlayVideoFrom.asset(
-                                'assets/SampleVideo_720x480_20mb.mp4'),
-                            PlayVideoFrom.asset(
-                                'assets/SampleVideo_720x480_20mb.mp4'),
-                            PlayVideoFrom.asset(
-                                'assets/SampleVideo_720x480_20mb.mp4'),
-                            PlayVideoFrom.asset(
-                                'assets/SampleVideo_720x480_20mb.mp4'),
-                            PlayVideoFrom.asset(
-                                'assets/SampleVideo_720x480_20mb.mp4'),
-                          ],
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => ListOfVideosScreen(
+                            videosList: [
+                              PlayVideoFrom.asset(
+                                'assets/SampleVideo_720x480_20mb.mp4',
+                              ),
+                              PlayVideoFrom.asset(
+                                'assets/SampleVideo_720x480_20mb.mp4',
+                              ),
+                              PlayVideoFrom.asset(
+                                'assets/SampleVideo_720x480_20mb.mp4',
+                              ),
+                              PlayVideoFrom.asset(
+                                'assets/SampleVideo_720x480_20mb.mp4',
+                              ),
+                              PlayVideoFrom.asset(
+                                'assets/SampleVideo_720x480_20mb.mp4',
+                              ),
+                            ],
+                          ),
                         ),
-                      ));
-                    }),
-                ElevatedButton(
+                      );
+                    },
+                  ),
+                  ElevatedButton(
                     child: const Text('List of Network videos'),
                     onPressed: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => ListOfVideosScreen(
-                          videosList: [
-                            PlayVideoFrom.network(
-                                'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4'),
-                            PlayVideoFrom.network(
-                                'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4'),
-                            PlayVideoFrom.network(
-                                'https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4'),
-                            PlayVideoFrom.network(
-                                'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4'),
-                            PlayVideoFrom.network(
-                                'http://techslides.com/demos/sample-videos/small.mp4'),
-                            PlayVideoFrom.network(
-                                'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4'),
-                            PlayVideoFrom.network(
-                                'http://techslides.com/demos/sample-videos/small.mp4'),
-                            PlayVideoFrom.network(
-                                'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4'),
-                            PlayVideoFrom.network(
-                                'http://techslides.com/demos/sample-videos/small.mp4'),
-                            PlayVideoFrom.network(
-                                'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4'),
-                            PlayVideoFrom.network(
-                                'http://techslides.com/demos/sample-videos/small.mp4'),
-                          ],
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => ListOfVideosScreen(
+                            videosList: [
+                              PlayVideoFrom.network(
+                                'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4',
+                              ),
+                              PlayVideoFrom.network(
+                                'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4',
+                              ),
+                              PlayVideoFrom.network(
+                                'https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4',
+                              ),
+                              PlayVideoFrom.network(
+                                'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4',
+                              ),
+                              PlayVideoFrom.network(
+                                'http://techslides.com/demos/sample-videos/small.mp4',
+                              ),
+                              PlayVideoFrom.network(
+                                'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4',
+                              ),
+                              PlayVideoFrom.network(
+                                'http://techslides.com/demos/sample-videos/small.mp4',
+                              ),
+                              PlayVideoFrom.network(
+                                'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4',
+                              ),
+                              PlayVideoFrom.network(
+                                'http://techslides.com/demos/sample-videos/small.mp4',
+                              ),
+                              PlayVideoFrom.network(
+                                'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4',
+                              ),
+                              PlayVideoFrom.network(
+                                'http://techslides.com/demos/sample-videos/small.mp4',
+                              ),
+                            ],
+                          ),
                         ),
-                      ));
-                    }),
-              ],
-            ),
-          );
-        }),
+                      );
+                    },
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
       ),
     );
   }
@@ -82,17 +106,14 @@ class ListOfVideosApp extends StatelessWidget {
 
 class ListOfVideosScreen extends StatelessWidget {
   final List<PlayVideoFrom> videosList;
-  const ListOfVideosScreen({Key? key, required this.videosList})
-      : super(key: key);
+  const ListOfVideosScreen({super.key, required this.videosList});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(title: const Text("Play List of Videos")),
-        body: ListOfVideosViewer(
-          videosList: videosList,
-        ),
+        body: ListOfVideosViewer(videosList: videosList),
       ),
     );
   }
@@ -100,8 +121,7 @@ class ListOfVideosScreen extends StatelessWidget {
 
 class ListOfVideosViewer extends StatefulWidget {
   final List<PlayVideoFrom> videosList;
-  const ListOfVideosViewer({Key? key, required this.videosList})
-      : super(key: key);
+  const ListOfVideosViewer({super.key, required this.videosList});
 
   @override
   State<ListOfVideosViewer> createState() => _ListOfVideosViewerState();

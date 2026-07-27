@@ -1,4 +1,4 @@
-part of 'package:pod_player/src/pod_player.dart';
+part of 'package:pod_player_plus/src/pod_player.dart';
 
 class _MobileBottomSheet extends StatelessWidget {
   final String tag;
@@ -225,9 +225,9 @@ class _MobileOverlayBottomControlles extends StatelessWidget {
               MaterialIconButton(
                 toolTipMesg: podCtr.isFullScreen
                     ? podCtr.podPlayerLabels.exitFullScreen ??
-                        'Exit full screen${kIsWeb ? ' (f)' : ''}'
+                          'Exit full screen${kIsWeb ? ' (f)' : ''}'
                     : podCtr.podPlayerLabels.fullscreen ??
-                        'Fullscreen${kIsWeb ? ' (f)' : ''}',
+                          'Fullscreen${kIsWeb ? ' (f)' : ''}',
                 color: itemColor,
                 onPressed: () {
                   if (podCtr.isOverlayVisible) {

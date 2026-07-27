@@ -1,12 +1,11 @@
 <h1 align="center">
-  <a href="https://github.com/newtaDev"><img src="https://user-images.githubusercontent.com/85326522/159757765-db86f850-fea8-4dc2-bd86-0a27648b24e5.png" alt="pod_player"></a>
+  <a href="https://github.com/mengporly-git/pod_player_plus"><img src="https://user-images.githubusercontent.com/85326522/159757765-db86f850-fea8-4dc2-bd86-0a27648b24e5.png" alt="pod_player_plus"></a>
 </h1>
 
 <p align="center">
-  <a href="https://pub.dev/packages/pod_player/score"><img src="https://img.shields.io/badge/Likes-200+-yellowgreen" alt="pub likes"></a>
-    <a href="https://pub.dev/packages/pod_player"><img src="https://img.shields.io/pub/v/pod_player?style=flat" alt="pub version"></a>
-  <a href="https://pub.dev/packages/pod_player/score"><img src="https://img.shields.io/badge/score-140-critical" alt="score"></a>
-  <a href="https://pub.dev/packages/pod_player/score"><img src="https://img.shields.io/badge/popularity-97﹪-critical" alt="pub points"></a>
+  <a href="https://pub.dev/packages/pod_player_plus/score"><img src="https://img.shields.io/pub/likes/pod_player_plus" alt="pub likes"></a>
+  <a href="https://pub.dev/packages/pod_player_plus"><img src="https://img.shields.io/pub/v/pod_player_plus?style=flat" alt="pub version"></a>
+  <a href="https://pub.dev/packages/pod_player_plus/score"><img src="https://img.shields.io/pub/points/pod_player_plus" alt="pub points"></a>
 
 </p>
 <p align="center"> <img src="https://komarev.com/ghpvc/?username=newtaDev&label=Total%20views&color=0e75b6&style=flat" alt="newta" /> </p>
@@ -17,7 +16,7 @@ pod player is a simple and easy-to-use video player. Its video controls are simi
 
 This plugin built upon flutter's official [`video_player`](https://pub.dartlang.org/packages/video_player) plugin
 
----
+This plugin fork from pod_player official [`pod_player`](https://pub.dev/packages/pod_player) plugin.
 
 | PLATFORM | AVAILABLE |
 | :------: | :-------: |
@@ -147,7 +146,7 @@ In your `pubspec.yaml` file within your Flutter Project:
 
 ```yaml
 dependencies:
-  pod_player: <latest_version>
+  pod_player_plus: <latest_version>
 ```
 
 ### Android
@@ -215,7 +214,7 @@ fluttercors --disable
 ---
 
 ```dart
-import 'package:pod_player/pod_player.dart';
+import 'package:pod_player_plus/pod_player_plus.dart';
 import 'package:flutter/material.dart';
 
 class PlayVideoFromNetwork extends StatefulWidget {
@@ -262,7 +261,7 @@ class _PlayVideoFromNetworkState extends State<PlayVideoFromNetwork> {
     podPlayerConfig: const PodPlayerConfig(
       autoPlay: true,
       isLooping: false,
-      videoQualityPriority: [720, 360]
+      videoQualityPriority: [1080, 720, 360]
     )
   )..initialise();
 ```
@@ -304,7 +303,7 @@ Widget build(BuildContext context) {
 ---
 
 ```dart
-import 'package:pod_player/pod_player.dart';
+import 'package:pod_player_plus/pod_player_plus.dart';
 import 'package:flutter/material.dart';
 
 class PlayVideoFromYoutube extends StatefulWidget {
@@ -341,12 +340,25 @@ class _PlayVideoFromYoutubeState extends State<PlayVideoFromYoutube> {
 
 ```
 
+### YouTube quality support
+
+On Android and iOS, non-live YouTube videos use adaptive playback:
+high-resolution video (including 720p and 1080p when supplied by YouTube) is
+synchronized with a separate audio stream. Web uses YouTube's muxed stream
+fallback, which is commonly limited to 360p. Live and restricted videos also
+use the available fallback stream.
+
 ## How to play video from vimeo
 
 ---
 
+Vimeo may return HTTP 403 for privacy restrictions, rate limits, or a blocked
+network IP. `pod_player_plus` reports these as `VimeoApiException` instead of a
+JSON `FormatException`. A blocked IP must be resolved by changing networks or
+using `PlayVideoFrom.vimeoPrivateVideos` with authorized Vimeo API headers.
+
 ```dart
-import 'package:pod_player/pod_player.dart';
+import 'package:pod_player_plus/pod_player_plus.dart';
 import 'package:flutter/material.dart';
 
 class PlayVideoFromVimeo extends StatefulWidget {
@@ -388,7 +400,7 @@ class _PlayVideoFromVimeoState extends State<PlayVideoFromVimeo> {
 ---
 
 ```dart
-import 'package:pod_player/pod_player.dart';
+import 'package:pod_player_plus/pod_player_plus.dart';
 import 'package:flutter/material.dart';
 
 class PlayVideoFromVimeo extends StatefulWidget {
@@ -430,7 +442,7 @@ class _PlayVideoFromVimeoState extends State<PlayVideoFromVimeo> {
 ---
 
 ```dart
-import 'package:pod_player/pod_player.dart';
+import 'package:pod_player_plus/pod_player_plus.dart';
 import 'package:flutter/material.dart';
 
 class PlayVideoFromVimeoPrivateVideo extends StatefulWidget {

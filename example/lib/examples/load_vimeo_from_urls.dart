@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:pod_player/pod_player.dart';
+import 'package:pod_player_plus/pod_player_plus.dart';
 
 void main(List<String> args) {
   runApp(const VimeoApp());
 }
 
 class VimeoApp extends StatelessWidget {
-  const VimeoApp({Key? key}) : super(key: key);
+  const VimeoApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +20,7 @@ class VimeoApp extends StatelessWidget {
 }
 
 class VimeoVideoViewer extends StatefulWidget {
-  const VimeoVideoViewer({Key? key}) : super(key: key);
+  const VimeoVideoViewer({super.key});
 
   @override
   State<VimeoVideoViewer> createState() => VimeoVideoViewerState();
@@ -40,9 +40,7 @@ class VimeoVideoViewerState extends State<VimeoVideoViewer> {
     setState(() => isLoading = false);
     controller = PodPlayerController(
       playVideoFrom: PlayVideoFrom.networkQualityUrls(videoUrls: urls!),
-      podPlayerConfig: const PodPlayerConfig(
-        videoQualityPriority: [360],
-      ),
+      podPlayerConfig: const PodPlayerConfig(videoQualityPriority: [360]),
     )..initialise();
   }
 

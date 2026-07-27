@@ -4,8 +4,8 @@ class _PodGesturesController extends _PodVideoQualityController {
   //double tap
   Timer? leftDoubleTapTimer;
   Timer? rightDoubleTapTimer;
-  int leftDoubleTapduration = 0;
-  int rightDubleTapduration = 0;
+  int leftDoubleTapDuration = 0;
+  int rightDubleTapDuration = 0;
   bool isLeftDbTapIconVisible = false;
   bool isRightDbTapIconVisible = false;
 
@@ -21,16 +21,18 @@ class _PodGesturesController extends _PodVideoQualityController {
     isRightDbTapIconVisible = false;
     isLeftDbTapIconVisible = true;
     updateLeftTapDuration(
-      leftDoubleTapduration += seconds ?? doubleTapForwardSeconds,
+      leftDoubleTapDuration += seconds ?? doubleTapForwardSeconds,
     );
-    seekBackward(Duration(seconds: seconds ?? doubleTapForwardSeconds));
+    unawaited(
+      seekBackward(Duration(seconds: seconds ?? doubleTapForwardSeconds)),
+    );
     update(['double-tap-left']);
     leftDoubleTapTimer = Timer(const Duration(milliseconds: 500), () {
       isLeftDbTapIconVisible = false;
       updateLeftTapDuration(0);
       leftDoubleTapTimer?.cancel();
       if (isvideoPlaying) {
-        playVideo(true);
+        unawaited(playVideo(true));
       }
       isShowOverlay(false);
     });
@@ -44,16 +46,18 @@ class _PodGesturesController extends _PodVideoQualityController {
     isLeftDbTapIconVisible = false;
     isRightDbTapIconVisible = true;
     updateRightTapDuration(
-      rightDubleTapduration += seconds ?? doubleTapForwardSeconds,
+      rightDubleTapDuration += seconds ?? doubleTapForwardSeconds,
     );
-    seekForward(Duration(seconds: seconds ?? doubleTapForwardSeconds));
+    unawaited(
+      seekForward(Duration(seconds: seconds ?? doubleTapForwardSeconds)),
+    );
     update(['double-tap-right']);
     rightDoubleTapTimer = Timer(const Duration(milliseconds: 500), () {
       isRightDbTapIconVisible = false;
       updateRightTapDuration(0);
       rightDoubleTapTimer?.cancel();
       if (isvideoPlaying) {
-        playVideo(true);
+        unawaited(playVideo(true));
       }
       isShowOverlay(false);
     });
@@ -76,15 +80,14 @@ class _PodGesturesController extends _PodVideoQualityController {
     }
   }
 
-  ///update doubletap durations
   void updateLeftTapDuration(int val) {
-    leftDoubleTapduration = val;
+    leftDoubleTapDuration = val;
     update(['double-tap']);
     update(['update-all']);
   }
 
   void updateRightTapDuration(int val) {
-    rightDubleTapduration = val;
+    rightDubleTapDuration = val;
     update(['double-tap']);
     update(['update-all']);
   }

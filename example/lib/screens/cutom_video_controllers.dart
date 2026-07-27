@@ -1,11 +1,11 @@
 import 'dart:developer';
 
-import 'package:pod_player/pod_player.dart';
+import 'package:pod_player_plus/pod_player_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class CustomVideoControlls extends StatefulWidget {
-  const CustomVideoControlls({Key? key}) : super(key: key);
+  const CustomVideoControlls({super.key});
 
   @override
   State<CustomVideoControlls> createState() => _CustomVideoControllsState();
@@ -18,9 +18,7 @@ class _CustomVideoControllsState extends State<CustomVideoControlls> {
     text:
         'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4',
   );
-  final vimeoTextFieldCtr = TextEditingController(
-    text: '518228118',
-  );
+  final vimeoTextFieldCtr = TextEditingController(text: '518228118');
   final youtubeTextFieldCtr = TextEditingController(
     text: 'https://youtu.be/A3ltMaM6noM',
   );
@@ -29,22 +27,26 @@ class _CustomVideoControllsState extends State<CustomVideoControlls> {
   @override
   void initState() {
     super.initState();
-    controller = PodPlayerController(
-      playVideoFrom: PlayVideoFrom.asset('assets/SampleVideo_720x480_20mb.mp4'),
-      // fromAssets: 'assets/long_video.mkv',
-      // fromAssets: 'assets/SampleVideo_720x480_20mb.mp4',
-      // fromNetworkUrl:
-      // 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4',
-      // 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4',
-      // 'https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4',
-      // 'https://user-images.githubusercontent.com/85326522/140480457-ab21345a-76e2-4b0e-b4ec-027c89f0e712.mp4',
-      // 'http://techslides.com/demos/sample-videos/small.mp4',
-      // fromVimeoVideoId: '518228118',
-    )..initialise().then((value) {
-        setState(() {
-          isVideoPlaying = controller.isVideoPlaying;
-        });
-      });
+    controller =
+        PodPlayerController(
+            playVideoFrom: PlayVideoFrom.asset(
+              'assets/SampleVideo_720x480_20mb.mp4',
+            ),
+            // fromAssets: 'assets/long_video.mkv',
+            // fromAssets: 'assets/SampleVideo_720x480_20mb.mp4',
+            // fromNetworkUrl:
+            // 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4',
+            // 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4',
+            // 'https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4',
+            // 'https://user-images.githubusercontent.com/85326522/140480457-ab21345a-76e2-4b0e-b4ec-027c89f0e712.mp4',
+            // 'http://techslides.com/demos/sample-videos/small.mp4',
+            // fromVimeoVideoId: '518228118',
+          )
+          ..initialise().then((value) {
+            setState(() {
+              isVideoPlaying = controller.isVideoPlaying;
+            });
+          });
     controller.addListener(_listner);
   }
 
@@ -70,13 +72,15 @@ class _CustomVideoControllsState extends State<CustomVideoControlls> {
     final totalHour = controller.currentVideoPosition.inHours == 0
         ? '0'
         : '${controller.currentVideoPosition.inHours}:';
-    final totalMinute =
-        controller.currentVideoPosition.toString().split(':')[1];
-    final totalSeconds = (controller.currentVideoPosition -
-            Duration(minutes: controller.currentVideoPosition.inMinutes))
-        .inSeconds
-        .toString()
-        .padLeft(2, '0');
+    final totalMinute = controller.currentVideoPosition.toString().split(
+      ':',
+    )[1];
+    final totalSeconds =
+        (controller.currentVideoPosition -
+                Duration(minutes: controller.currentVideoPosition.inMinutes))
+            .inSeconds
+            .toString()
+            .padLeft(2, '0');
 
     ///
     const videoTitle = Padding(
@@ -85,18 +89,12 @@ class _CustomVideoControllsState extends State<CustomVideoControlls> {
           : EdgeInsets.only(left: 15),
       child: Text(
         'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: 18,
-        ),
+        style: TextStyle(color: Colors.white, fontSize: 18),
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
       ),
     );
-    const textStyle = TextStyle(
-      fontSize: 20,
-      fontWeight: FontWeight.bold,
-    );
+    const textStyle = TextStyle(fontSize: 20, fontWeight: FontWeight.bold);
     return Scaffold(
       appBar: AppBar(title: const Text('Custom Player')),
       body: SafeArea(
@@ -149,48 +147,70 @@ class _CustomVideoControllsState extends State<CustomVideoControlls> {
                     sizeH20,
                     _loadVideoFromYoutube(),
                     sizeH20,
-                    _iconButton('Hide progress bar on overlay hidden',
-                        Icons.hide_source, onPressed: () {
-                      setState(() {
-                        alwaysShowProgressBar = false;
-                      });
-                    }),
-                    sizeH20,
-                    _iconButton('Show Overlay', Icons.slideshow_outlined,
-                        onPressed: () {
-                      controller.showOverlay();
-                    }),
-                    sizeH20,
-                    _iconButton('Hide Overlay', Icons.hide_image,
-                        onPressed: () {
-                      controller.hideOverlay();
-                    }),
-                    _iconButton('Backward video 5s', Icons.replay_5_rounded,
-                        onPressed: () {
-                      controller.doubleTapVideoBackward(5);
-                    }),
-                    sizeH20,
-                    _iconButton('Forward video 5s', Icons.forward_5_rounded,
-                        onPressed: () {
-                      controller.doubleTapVideoForward(5);
-                    }),
-                    sizeH20,
-                    _iconButton('Video Jump to 01:00 minute',
-                        Icons.fast_forward_rounded, onPressed: () {
-                      controller.videoSeekTo(const Duration(minutes: 1));
-                    }),
-                    sizeH20,
-                    _iconButton('Enable full screen', Icons.fullscreen,
-                        onPressed: () {
-                      controller.enableFullScreen();
-                    }),
+                    _iconButton(
+                      'Hide progress bar on overlay hidden',
+                      Icons.hide_source,
+                      onPressed: () {
+                        setState(() {
+                          alwaysShowProgressBar = false;
+                        });
+                      },
+                    ),
                     sizeH20,
                     _iconButton(
-                        controller.isMute ? 'UnMute video' : 'mute video',
-                        controller.isMute ? Icons.volume_up : Icons.volume_off,
-                        onPressed: () {
-                      controller.toggleVolume();
-                    }),
+                      'Show Overlay',
+                      Icons.slideshow_outlined,
+                      onPressed: () {
+                        controller.showOverlay();
+                      },
+                    ),
+                    sizeH20,
+                    _iconButton(
+                      'Hide Overlay',
+                      Icons.hide_image,
+                      onPressed: () {
+                        controller.hideOverlay();
+                      },
+                    ),
+                    _iconButton(
+                      'Backward video 5s',
+                      Icons.replay_5_rounded,
+                      onPressed: () {
+                        controller.doubleTapVideoBackward(5);
+                      },
+                    ),
+                    sizeH20,
+                    _iconButton(
+                      'Forward video 5s',
+                      Icons.forward_5_rounded,
+                      onPressed: () {
+                        controller.doubleTapVideoForward(5);
+                      },
+                    ),
+                    sizeH20,
+                    _iconButton(
+                      'Video Jump to 01:00 minute',
+                      Icons.fast_forward_rounded,
+                      onPressed: () {
+                        controller.videoSeekTo(const Duration(minutes: 1));
+                      },
+                    ),
+                    sizeH20,
+                    _iconButton(
+                      'Enable full screen',
+                      Icons.fullscreen,
+                      onPressed: () {
+                        controller.enableFullScreen();
+                      },
+                    ),
+                    sizeH20,
+                    _iconButton(
+                      controller.isMute ? 'UnMute video' : 'mute video',
+                      controller.isMute ? Icons.volume_up : Icons.volume_off,
+                      onPressed: () {
+                        controller.toggleVolume();
+                      },
+                    ),
                     sizeH20,
                     sizeH20,
                     Text(
@@ -205,10 +225,10 @@ class _CustomVideoControllsState extends State<CustomVideoControlls> {
                     Text(
                       'Total Video length: ${controller.totalVideoLength}',
                       style: textStyle,
-                    )
+                    ),
                   ],
                 ),
-              )
+              ),
             ],
           ),
         ),
@@ -258,17 +278,16 @@ class _CustomVideoControllsState extends State<CustomVideoControlls> {
                 playVideoFrom: PlayVideoFrom.vimeo(vimeoTextFieldCtr.text),
               );
               controller.addListener(_listner);
-              controller.onVideoQualityChanged(
-                () {
-                  log('Vimeo video quality changed');
-                  controller.addListener(_listner);
-                },
-              );
+              controller.onVideoQualityChanged(() {
+                log('Vimeo video quality changed');
+                controller.addListener(_listner);
+              });
               if (!mounted) return;
               ScaffoldMessenger.of(context).hideCurrentSnackBar();
             } catch (e) {
               snackBar(
-                  "Unable to load,${kIsWeb ? 'Please enable CORS in web' : ''}  \n$e");
+                "Unable to load,${kIsWeb ? 'Please enable CORS in web' : ''}  \n$e",
+              );
             }
           },
           child: const Text('Load Video'),
@@ -304,17 +323,16 @@ class _CustomVideoControllsState extends State<CustomVideoControlls> {
                 playVideoFrom: PlayVideoFrom.youtube(youtubeTextFieldCtr.text),
               );
               controller.addListener(_listner);
-              controller.onVideoQualityChanged(
-                () {
-                  log('Youtube video quality changed');
-                  controller.addListener(_listner);
-                },
-              );
+              controller.onVideoQualityChanged(() {
+                log('Youtube video quality changed');
+                controller.addListener(_listner);
+              });
               if (!mounted) return;
               ScaffoldMessenger.of(context).hideCurrentSnackBar();
             } catch (e) {
               snackBar(
-                  "Unable to load,${kIsWeb ? 'Please enable CORS in web' : ''}  \n$e");
+                "Unable to load,${kIsWeb ? 'Please enable CORS in web' : ''}  \n$e",
+              );
             }
           },
           child: const Text('Load Video'),
@@ -365,20 +383,21 @@ class _CustomVideoControllsState extends State<CustomVideoControlls> {
   void snackBar(String text) {
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
-      ..showSnackBar(
-        SnackBar(
-          content: Text(text),
-        ),
-      );
+      ..showSnackBar(SnackBar(content: Text(text)));
   }
 
-  ElevatedButton _iconButton(String text, IconData icon,
-      {void Function()? onPressed}) {
+  ElevatedButton _iconButton(
+    String text,
+    IconData icon, {
+    void Function()? onPressed,
+  }) {
     return ElevatedButton.icon(
-        onPressed: onPressed ?? () {},
-        style: ElevatedButton.styleFrom(
-            fixedSize: const Size.fromWidth(double.maxFinite)),
-        icon: Icon(icon),
-        label: Text(text));
+      onPressed: onPressed ?? () {},
+      style: ElevatedButton.styleFrom(
+        fixedSize: const Size.fromWidth(double.maxFinite),
+      ),
+      icon: Icon(icon),
+      label: Text(text),
+    );
   }
 }

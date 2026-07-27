@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:pod_player/pod_player.dart';
+import 'package:pod_player_plus/pod_player_plus.dart';
 
 class PlayVideoFromYoutube extends StatefulWidget {
-  const PlayVideoFromYoutube({Key? key}) : super(key: key);
+  const PlayVideoFromYoutube({super.key});
 
   @override
   State<PlayVideoFromYoutube> createState() => _PlayVideoFromVimeoIdState();
@@ -11,12 +11,15 @@ class PlayVideoFromYoutube extends StatefulWidget {
 class _PlayVideoFromVimeoIdState extends State<PlayVideoFromYoutube> {
   late final PodPlayerController controller;
   final videoTextFieldCtr = TextEditingController();
+
   @override
   void initState() {
     controller = PodPlayerController(
-      playVideoFrom: PlayVideoFrom.youtube('https://youtu.be/A3ltMaM6noM'),
+      playVideoFrom: PlayVideoFrom.youtube(
+        'https://www.youtube.com/watch?v=39pzq8SdnbU',
+      ),
       podPlayerConfig: const PodPlayerConfig(
-        videoQualityPriority: [720, 360],
+        videoQualityPriority: [1080, 720, 360],
         autoPlay: false,
       ),
     )..initialise();
@@ -48,7 +51,7 @@ class _PlayVideoFromVimeoIdState extends State<PlayVideoFromYoutube> {
                 ),
               ),
               const SizedBox(height: 40),
-              _loadVideoFromUrl()
+              _loadVideoFromUrl(),
             ],
           ),
         ),
@@ -66,7 +69,7 @@ class _PlayVideoFromVimeoIdState extends State<PlayVideoFromYoutube> {
             decoration: const InputDecoration(
               labelText: 'Enter youtube url/id',
               floatingLabelBehavior: FloatingLabelBehavior.always,
-              hintText: 'https://youtu.be/A3ltMaM6noM',
+              hintText: 'https://www.youtube.com/watch?v=39pzq8SdnbU',
               border: OutlineInputBorder(),
             ),
           ),
@@ -102,10 +105,6 @@ class _PlayVideoFromVimeoIdState extends State<PlayVideoFromYoutube> {
   void snackBar(String text) {
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
-      ..showSnackBar(
-        SnackBar(
-          content: Text(text),
-        ),
-      );
+      ..showSnackBar(SnackBar(content: Text(text)));
   }
 }

@@ -1,9 +1,9 @@
-import 'package:pod_player/pod_player.dart';
+import 'package:pod_player_plus/pod_player_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class PlayVideoFromNetwork extends StatefulWidget {
-  const PlayVideoFromNetwork({Key? key}) : super(key: key);
+  const PlayVideoFromNetwork({super.key});
 
   @override
   State<PlayVideoFromNetwork> createState() => _PlayVideoFromAssetState();
@@ -17,7 +17,7 @@ class _PlayVideoFromAssetState extends State<PlayVideoFromNetwork> {
   void initState() {
     controller = PodPlayerController(
       playVideoFrom: PlayVideoFrom.network(
-        'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4',
+        'https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4',
       ),
     )..initialise();
     super.initState();
@@ -32,7 +32,7 @@ class _PlayVideoFromAssetState extends State<PlayVideoFromNetwork> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Play video from Netwok')),
+      appBar: AppBar(title: const Text('Play video from Network')),
       body: SafeArea(
         child: Center(
           child: ListView(
@@ -43,18 +43,14 @@ class _PlayVideoFromAssetState extends State<PlayVideoFromNetwork> {
                 podProgressBarConfig: const PodProgressBarConfig(
                   padding: kIsWeb
                       ? EdgeInsets.zero
-                      : EdgeInsets.only(
-                          bottom: 20,
-                          left: 20,
-                          right: 20,
-                        ),
+                      : EdgeInsets.only(bottom: 20, left: 20, right: 20),
                   playingBarColor: Colors.blue,
                   circleHandlerColor: Colors.blue,
                   backgroundColor: Colors.blueGrey,
                 ),
               ),
               const SizedBox(height: 40),
-              _loadVideoFromUrl()
+              _loadVideoFromUrl(),
             ],
           ),
         ),
@@ -73,7 +69,7 @@ class _PlayVideoFromAssetState extends State<PlayVideoFromNetwork> {
               labelText: 'Enter video url',
               floatingLabelBehavior: FloatingLabelBehavior.always,
               hintText:
-                  'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4',
+                  'https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4',
               border: OutlineInputBorder(),
             ),
           ),
@@ -109,10 +105,6 @@ class _PlayVideoFromAssetState extends State<PlayVideoFromNetwork> {
   void snackBar(String text) {
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
-      ..showSnackBar(
-        SnackBar(
-          content: Text(text),
-        ),
-      );
+      ..showSnackBar(SnackBar(content: Text(text)));
   }
 }

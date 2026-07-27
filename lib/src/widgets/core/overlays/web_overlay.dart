@@ -1,4 +1,4 @@
-part of 'package:pod_player/src/pod_player.dart';
+part of 'package:pod_player_plus/src/pod_player.dart';
 
 class _WebOverlay extends StatelessWidget {
   final String tag;
@@ -108,9 +108,9 @@ class _WebOverlayBottomControlles extends StatelessWidget {
                           builder: (podCtr) => MaterialIconButton(
                             toolTipMesg: podCtr.isMute
                                 ? podCtr.podPlayerLabels.unmute ??
-                                    'Unmute${kIsWeb ? ' (m)' : ''}'
+                                      'Unmute${kIsWeb ? ' (m)' : ''}'
                                 : podCtr.podPlayerLabels.mute ??
-                                    'Mute${kIsWeb ? ' (m)' : ''}',
+                                      'Mute${kIsWeb ? ' (m)' : ''}',
                             color: itemColor,
                             onPressed: podCtr.toggleMute,
                             child: Icon(
@@ -161,9 +161,9 @@ class _WebOverlayBottomControlles extends StatelessWidget {
                         MaterialIconButton(
                           toolTipMesg: podCtr.isFullScreen
                               ? podCtr.podPlayerLabels.exitFullScreen ??
-                                  'Exit full screen${kIsWeb ? ' (f)' : ''}'
+                                    'Exit full screen${kIsWeb ? ' (f)' : ''}'
                               : podCtr.podPlayerLabels.fullscreen ??
-                                  'Fullscreen${kIsWeb ? ' (f)' : ''}',
+                                    'Fullscreen${kIsWeb ? ' (f)' : ''}',
                           color: itemColor,
                           onPressed: () => _onFullScreenToggle(podCtr, context),
                           child: Icon(

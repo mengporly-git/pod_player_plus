@@ -1,4 +1,4 @@
-part of 'package:pod_player/src/pod_player.dart';
+part of 'package:pod_player_plus/src/pod_player.dart';
 
 class _VideoGestureDetector extends StatelessWidget {
   final Widget? child;

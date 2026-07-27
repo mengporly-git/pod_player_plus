@@ -7,6 +7,7 @@ class _PodVideoQualityController extends _PodVideoController {
   ///vimeo all quality urls
   List<VideoQalityUrls> vimeoOrVideoUrls = [];
   late String _videoQualityUrl;
+  String? _audioQualityUrl;
 
   ///invokes callback from external controller
   VoidCallback? onVimeoVideoQualityChanged;
@@ -38,8 +39,10 @@ class _PodVideoQualityController extends _PodVideoController {
   ) async {
     try {
       podVideoStateChanger(PodVideoState.loading);
-      final vimeoVideoUrls =
-          await VideoApis.getVimeoPrivateVideoQualityUrls(videoId, httpHeader);
+      final vimeoVideoUrls = await VideoApis.getVimeoPrivateVideoQualityUrls(
+        videoId,
+        httpHeader,
+      );
 
       ///
       vimeoOrVideoUrls = vimeoVideoUrls ?? [];
@@ -100,6 +103,7 @@ class _PodVideoQualityController extends _PodVideoController {
 
     urlWithQuality ??= fallback;
     _videoQualityUrl = urlWithQuality.url;
+    _audioQualityUrl = urlWithQuality.audioUrl;
     vimeoPlayingVideoQuality = urlWithQuality.quality;
     return _videoQualityUrl;
   }
@@ -117,23 +121,61 @@ class _PodVideoQualityController extends _PodVideoController {
       throw Exception('videoQuality cannot be empty');
     }
     if (vimeoPlayingVideoQuality != quality) {
-      _videoQualityUrl = vimeoOrVideoUrls
-          .where((element) => element.quality == quality)
-          .first
-          .url;
+      final selectedQuality = vimeoOrVideoUrls.firstWhere(
+        (element) => element.quality == quality,
+      );
+      _videoQualityUrl = selectedQuality.url;
+      _audioQualityUrl = selectedQuality.audioUrl;
       podLog(_videoQualityUrl);
       vimeoPlayingVideoQuality = quality;
-      _videoCtr?.removeListener(videoListner);
+
+      final oldVideoController = _videoCtr;
+      final oldAudioController = _audioCtr;
+      final wasPlaying = oldVideoController?.value.isPlaying ?? isvideoPlaying;
+      final oldVolume = isMute ? 0.0 : oldVideoController?.value.volume ?? 1.0;
+
+      await _pausePlaybackControllers();
       podVideoStateChanger(PodVideoState.paused);
       podVideoStateChanger(PodVideoState.loading);
       playingVideoUrl = _videoQualityUrl;
-      _videoCtr = VideoPlayerController.networkUrl(Uri.parse(_videoQualityUrl));
-      await _videoCtr?.initialize();
+
+      final newVideoController = VideoPlayerController.networkUrl(
+        Uri.parse(_videoQualityUrl),
+      );
+      final newAudioController = _createAudioController(_audioQualityUrl);
+      await Future.wait([
+        newVideoController.initialize(),
+        if (newAudioController != null) newAudioController.initialize(),
+      ]);
+
+      await Future.wait([
+        newVideoController.setLooping(isLooping),
+        newVideoController.setVolume(oldVolume),
+        newVideoController.setPlaybackSpeed(_playbackSpeedValue),
+        if (newAudioController != null) ...[
+          newAudioController.setLooping(isLooping),
+          newAudioController.setVolume(oldVolume),
+          newAudioController.setPlaybackSpeed(_playbackSpeedValue),
+        ],
+      ]);
+
+      oldVideoController?.removeListener(videoListener);
+      _videoCtr = newVideoController..addListener(videoListener);
+      _audioCtr = newAudioController;
       _videoDuration = _videoCtr?.value.duration ?? Duration.zero;
-      _videoCtr?.addListener(videoListner);
-      await _videoCtr?.seekTo(_videoPosition);
-      setVideoPlayBack(_currentPaybackSpeed);
-      podVideoStateChanger(PodVideoState.playing);
+      await _seekPlaybackControllers(_videoPosition);
+
+      await Future.wait([
+        if (oldVideoController != null) oldVideoController.dispose(),
+        if (oldAudioController != null) oldAudioController.dispose(),
+      ]);
+
+      if (wasPlaying) {
+        podVideoStateChanger(PodVideoState.playing);
+        await _playPlaybackControllers();
+      } else {
+        podVideoStateChanger(PodVideoState.paused);
+      }
       onVimeoVideoQualityChanged?.call();
       update();
       update(['update-all']);

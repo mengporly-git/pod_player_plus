@@ -1,3 +1,14 @@
+## 0.3.0
+
+- Renamed the package to `pod_player_plus`.
+- Updated Flutter, Dart, Android, iOS, and package dependencies.
+- Added Android and iOS adaptive YouTube playback with selectable 720p and 1080p
+  video streams synchronized to separate audio.
+- Kept muxed YouTube playback as the fallback for web, live, and restricted
+  videos.
+- Added validated Vimeo responses, progressive quality parsing, and clear
+  errors for HTML, privacy, rate-limit, and blocked-IP responses.
+
 ## 0.2.2
 - fixed broken vimeo api requests
 - upgraded minimum sdk version from ">=2.17.0 <4.0.0" to ">=3.0.0 <4.0.0"

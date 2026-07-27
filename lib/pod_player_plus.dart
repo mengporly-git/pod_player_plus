@@ -1,5 +1,5 @@
-/// Pod Player library
-library pod_player;
+/// Pod Player Plus library.
+library;
 
 export 'package:video_player/video_player.dart';
 

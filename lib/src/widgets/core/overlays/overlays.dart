@@ -1,4 +1,4 @@
-part of 'package:pod_player/src/pod_player.dart';
+part of 'package:pod_player_plus/src/pod_player.dart';
 
 class _VideoOverlays extends StatelessWidget {
   final String tag;
@@ -32,7 +32,7 @@ class _VideoOverlays extends StatelessWidget {
             currentVideoPlaybackSpeed: podCtr.currentPaybackSpeed,
             videoPlayBackSpeeds: podCtr.videoPlaybackSpeeds,
             videoPlayerType: podCtr.videoPlayerType,
-            podProgresssBar: progressBar,
+            podProgressBar: progressBar,
           );
 
           /// Returns the custom overlay, otherwise returns the default

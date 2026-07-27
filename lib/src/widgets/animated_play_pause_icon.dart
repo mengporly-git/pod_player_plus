@@ -1,4 +1,4 @@
-part of 'package:pod_player/src/pod_player.dart';
+part of 'package:pod_player_plus/src/pod_player.dart';
 
 class _AnimatedPlayPauseIcon extends StatefulWidget {
   final double? size;
@@ -61,11 +61,12 @@ class _AnimatedPlayPauseIconState extends State<_AnimatedPlayPauseIcon>
           builder: (f) => MaterialIconButton(
             toolTipMesg: f.isvideoPlaying
                 ? podCtr.podPlayerLabels.pause ??
-                    'Pause${kIsWeb ? ' (space)' : ''}'
+                      'Pause${kIsWeb ? ' (space)' : ''}'
                 : podCtr.podPlayerLabels.play ??
-                    'Play${kIsWeb ? ' (space)' : ''}',
-            onPressed:
-                podCtr.isOverlayVisible ? podCtr.togglePlayPauseVideo : null,
+                      'Play${kIsWeb ? ' (space)' : ''}',
+            onPressed: podCtr.isOverlayVisible
+                ? podCtr.togglePlayPauseVideo
+                : null,
             child: onStateChange(podCtr),
           ),
         );

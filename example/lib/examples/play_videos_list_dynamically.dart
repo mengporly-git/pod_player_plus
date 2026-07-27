@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
-import 'package:pod_player/pod_player.dart';
+import 'package:pod_player_plus/pod_player_plus.dart';
 
 void main(List<String> args) {
   PodVideoPlayer.enableLogs = true;
@@ -9,7 +9,7 @@ void main(List<String> args) {
 }
 
 class ListOfVideosApp extends StatelessWidget {
-  const ListOfVideosApp({Key? key}) : super(key: key);
+  const ListOfVideosApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -18,27 +18,32 @@ class ListOfVideosApp extends StatelessWidget {
         controllers: [
           PodPlayerController(
             playVideoFrom: PlayVideoFrom.youtube(
-                'https://www.youtube.com/watch?v=bk6Xst6euQk'),
-            podPlayerConfig: const PodPlayerConfig(autoPlay: false),
-          ),
-          PodPlayerController(
-            playVideoFrom:
-                PlayVideoFrom.youtube('https://youtu.be/A3ltMaM6noM'),
+              'https://www.youtube.com/watch?v=bk6Xst6euQk',
+            ),
             podPlayerConfig: const PodPlayerConfig(autoPlay: false),
           ),
           PodPlayerController(
             playVideoFrom: PlayVideoFrom.youtube(
-                'https://www.youtube.com/watch?v=TjBA6jy4ako'),
+              'https://youtu.be/A3ltMaM6noM',
+            ),
             podPlayerConfig: const PodPlayerConfig(autoPlay: false),
           ),
           PodPlayerController(
             playVideoFrom: PlayVideoFrom.youtube(
-                'https://www.youtube.com/watch?v=HqFgRHTuDyc'),
+              'https://www.youtube.com/watch?v=TjBA6jy4ako',
+            ),
             podPlayerConfig: const PodPlayerConfig(autoPlay: false),
           ),
           PodPlayerController(
             playVideoFrom: PlayVideoFrom.youtube(
-                'https://www.youtube.com/watch?v=GpxD-T060RY'),
+              'https://www.youtube.com/watch?v=HqFgRHTuDyc',
+            ),
+            podPlayerConfig: const PodPlayerConfig(autoPlay: false),
+          ),
+          PodPlayerController(
+            playVideoFrom: PlayVideoFrom.youtube(
+              'https://www.youtube.com/watch?v=GpxD-T060RY',
+            ),
             podPlayerConfig: const PodPlayerConfig(autoPlay: false),
           ),
         ],
@@ -50,23 +55,23 @@ class ListOfVideosApp extends StatelessWidget {
 class ListOfVideosScreen extends StatelessWidget {
   final List<PodPlayerController> controllers;
 
-  const ListOfVideosScreen({Key? key, required this.controllers})
-      : super(key: key);
+  const ListOfVideosScreen({super.key, required this.controllers});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-          appBar: AppBar(title: const Text("Play List of Videos")),
-          body: ListView.builder(
-            itemCount: controllers.length,
-            itemBuilder: (context, index) {
-              return VideoViewer(
-                controller: controllers[index],
-                controllers: controllers,
-              );
-            },
-          )),
+        appBar: AppBar(title: const Text("Play List of Videos")),
+        body: ListView.builder(
+          itemCount: controllers.length,
+          itemBuilder: (context, index) {
+            return VideoViewer(
+              controller: controllers[index],
+              controllers: controllers,
+            );
+          },
+        ),
+      ),
     );
   }
 }
@@ -76,10 +81,10 @@ class VideoViewer extends StatefulWidget {
   final List<PodPlayerController> controllers;
 
   const VideoViewer({
-    Key? key,
+    super.key,
     required this.controller,
     required this.controllers,
-  }) : super(key: key);
+  });
 
   @override
   State<VideoViewer> createState() => VideoViewerState();
@@ -110,41 +115,40 @@ class VideoViewerState extends State<VideoViewer> {
           }
         },
         child: PodVideoPlayer(
-            controller: widget.controller,
-            alwaysShowProgressBar: true,
-            overlayBuilder: (options) {
-              return Container(
-                color: Colors.grey.withOpacity(0.2),
-                child: Row(
-                  children: [
-                    ElevatedButton(
-                      child: Text(
-                        options.isMute ? 'UnMute' : 'Mute',
-                      ),
-                      onPressed: () {
-                        widget.controller.toggleVolume();
-                      },
+          controller: widget.controller,
+          alwaysShowProgressBar: true,
+          overlayBuilder: (options) {
+            return Container(
+              color: Colors.grey.withValues(alpha: 0.2),
+              child: Row(
+                children: [
+                  ElevatedButton(
+                    child: Text(options.isMute ? 'UnMute' : 'Mute'),
+                    onPressed: () {
+                      widget.controller.toggleVolume();
+                    },
+                  ),
+                  const SizedBox(width: 10),
+                  ElevatedButton(
+                    child: Text(
+                      options.podVideoState == PodVideoState.paused
+                          ? 'Play'
+                          : 'Pause',
                     ),
-                    const SizedBox(width: 10),
-                    ElevatedButton(
-                      child: Text(
-                        options.podVideoState == PodVideoState.paused
-                            ? 'Play'
-                            : 'Pause',
-                      ),
-                      onPressed: () {
-                        widget.controller.togglePlayPause();
-                      },
-                    ),
-                    const SizedBox(width: 10),
-                    ElevatedButton(
-                      child: const Text('Full Screen'),
-                      onPressed: () {},
-                    ),
-                  ],
-                ),
-              );
-            }),
+                    onPressed: () {
+                      widget.controller.togglePlayPause();
+                    },
+                  ),
+                  const SizedBox(width: 10),
+                  ElevatedButton(
+                    child: const Text('Full Screen'),
+                    onPressed: () {},
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
       ),
     );
   }

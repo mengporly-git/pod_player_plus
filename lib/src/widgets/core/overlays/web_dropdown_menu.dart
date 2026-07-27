@@ -1,4 +1,4 @@
-part of 'package:pod_player/src/pod_player.dart';
+part of 'package:pod_player_plus/src/pod_player.dart';
 
 class _WebSettingsDropdown extends StatefulWidget {
   final String tag;
@@ -68,14 +68,11 @@ class _WebSettingsDropdownState extends State<_WebSettingsDropdown> {
               switch (settingsMenu) {
                 case 'OUALITY':
                   await _onVimeoQualitySelect(details, podCtr);
-                  break;
                 case 'SPEED':
                   await _onPlaybackSpeedSelect(details, podCtr);
-                  break;
                 case 'LOOP':
                   podCtr.isWebPopupOverlayOpen = false;
                   await podCtr.toggleLooping();
-                  break;
                 default:
                   podCtr.isWebPopupOverlayOpen = false;
               }
@@ -109,7 +106,6 @@ class _WebSettingsDropdownState extends State<_WebSettingsDropdown> {
           .toList(),
       position: RelativeRect.fromSize(
         details.globalPosition & Size.zero,
-        // ignore: use_build_context_synchronously
         MediaQuery.of(context).size,
       ),
     );
@@ -141,7 +137,6 @@ class _WebSettingsDropdownState extends State<_WebSettingsDropdown> {
           .toList(),
       position: RelativeRect.fromSize(
         details.globalPosition & Size.zero,
-        // ignore: use_build_context_synchronously
         MediaQuery.of(context).size,
       ),
     );

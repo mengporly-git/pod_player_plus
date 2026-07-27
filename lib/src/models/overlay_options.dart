@@ -1,4 +1,4 @@
-import '../../pod_player.dart';
+import '../../pod_player_plus.dart';
 
 class OverLayOptions {
   final PodVideoState podVideoState;
@@ -12,7 +12,7 @@ class OverLayOptions {
   final String currentVideoPlaybackSpeed;
   final List<String> videoPlayBackSpeeds;
   final PodVideoPlayerType videoPlayerType;
-  final PodProgressBar podProgresssBar;
+  final PodProgressBar podProgressBar;
   OverLayOptions({
     required this.podVideoState,
     required this.videoDuration,
@@ -25,6 +25,6 @@ class OverLayOptions {
     required this.currentVideoPlaybackSpeed,
     required this.videoPlayBackSpeeds,
     required this.videoPlayerType,
-    required this.podProgresssBar,
+    required this.podProgressBar,
   });
 }

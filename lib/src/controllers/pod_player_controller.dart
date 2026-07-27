@@ -5,7 +5,7 @@ import 'package:get/get.dart';
 import 'package:universal_html/html.dart' as uni_html;
 import 'package:wakelock_plus/wakelock_plus.dart';
 
-import '../../pod_player.dart';
+import '../../pod_player_plus.dart';
 import '../utils/logger.dart';
 import '../utils/video_apis.dart';
 import 'pod_getx_video_controller.dart';
@@ -163,8 +163,7 @@ class PodPlayerController {
   ///Dispose pod video player controller
   void dispose() {
     _isCtrInitialised = false;
-    _ctr.videoCtr?.removeListener(_ctr.videoListner);
-    _ctr.videoCtr?.dispose();
+    unawaited(_ctr.disposePlaybackControllers());
     _ctr.removeListenerId('podVideoState', _ctr.podStateListner);
     if (podPlayerConfig.wakelockEnabled) WakelockPlus.disable();
     Get.delete<PodGetXVideoController>(
@@ -178,11 +177,10 @@ class PodPlayerController {
   Future<void> changeVideo({
     required PlayVideoFrom playVideoFrom,
     PodPlayerConfig playerConfig = const PodPlayerConfig(),
-  }) =>
-      _ctr.changeVideo(
-        playVideoFrom: playVideoFrom,
-        playerConfig: playerConfig,
-      );
+  }) => _ctr.changeVideo(
+    playVideoFrom: playVideoFrom,
+    playerConfig: playerConfig,
+  );
 
   //Change double tap duration
   void setDoubeTapForwarDuration(int seconds) =>

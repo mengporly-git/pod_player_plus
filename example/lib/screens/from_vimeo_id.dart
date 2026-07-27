@@ -1,8 +1,10 @@
-import 'package:pod_player/pod_player.dart';
+import 'dart:async';
+
+import 'package:pod_player_plus/pod_player_plus.dart';
 import 'package:flutter/material.dart';
 
 class PlayVideoFromVimeoId extends StatefulWidget {
-  const PlayVideoFromVimeoId({Key? key}) : super(key: key);
+  const PlayVideoFromVimeoId({super.key});
 
   @override
   State<PlayVideoFromVimeoId> createState() => _PlayVideoFromVimeoIdState();
@@ -15,10 +17,22 @@ class _PlayVideoFromVimeoIdState extends State<PlayVideoFromVimeoId> {
 
   @override
   void initState() {
-    controller = PodPlayerController(
-      playVideoFrom: PlayVideoFrom.vimeo('518228118'),
-    )..initialise();
     super.initState();
+    controller = PodPlayerController(
+      playVideoFrom: PlayVideoFrom.vimeo('1179947837'),
+    );
+    unawaited(_initialiseController());
+  }
+
+  Future<void> _initialiseController() async {
+    try {
+      await controller.initialise();
+    } on Object catch (error) {
+      if (!mounted) return;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) snackBar('Unable to load Vimeo video:\n$error');
+      });
+    }
   }
 
   @override
@@ -38,7 +52,7 @@ class _PlayVideoFromVimeoIdState extends State<PlayVideoFromVimeoId> {
             children: [
               PodVideoPlayer(controller: controller),
               const SizedBox(height: 40),
-              _loadVideoFromUrl()
+              _loadVideoFromUrl(),
             ],
           ),
         ),
@@ -46,31 +60,26 @@ class _PlayVideoFromVimeoIdState extends State<PlayVideoFromVimeoId> {
     );
   }
 
-  Row _loadVideoFromUrl() {
-    return Row(
+  Widget _loadVideoFromUrl() {
+    return Column(
+      spacing: 8,
       children: [
-        Expanded(
-          flex: 2,
-          child: TextField(
-            controller: videoTextFieldCtr,
-            decoration: const InputDecoration(
-              labelText: 'Enter vimeo id',
-              floatingLabelBehavior: FloatingLabelBehavior.always,
-              hintText: 'ex: 518228118',
-              border: OutlineInputBorder(),
-            ),
+        TextField(
+          controller: videoTextFieldCtr,
+          decoration: const InputDecoration(
+            labelText: 'Enter vimeo id',
+            floatingLabelBehavior: FloatingLabelBehavior.always,
+            hintText: 'ex: 1179947837',
+            border: OutlineInputBorder(),
           ),
         ),
-        Expanded(
-          flex: 2,
-          child: TextField(
-            controller: hashTextFieldCtr,
-            decoration: const InputDecoration(
-              labelText: 'Enter vimeo hash',
-              floatingLabelBehavior: FloatingLabelBehavior.always,
-              hintText: 'ex: ddefbc',
-              border: OutlineInputBorder(),
-            ),
+        TextField(
+          controller: hashTextFieldCtr,
+          decoration: const InputDecoration(
+            labelText: 'Enter vimeo hash',
+            floatingLabelBehavior: FloatingLabelBehavior.always,
+            hintText: 'ex: ddefbc',
+            border: OutlineInputBorder(),
           ),
         ),
         const SizedBox(width: 10),
@@ -108,10 +117,6 @@ class _PlayVideoFromVimeoIdState extends State<PlayVideoFromVimeoId> {
   void snackBar(String text) {
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
-      ..showSnackBar(
-        SnackBar(
-          content: Text(text),
-        ),
-      );
+      ..showSnackBar(SnackBar(content: Text(text)));
   }
 }

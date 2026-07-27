@@ -17,7 +17,7 @@ class PodProgressBar extends StatefulWidget {
     this.onDragUpdate,
     this.alignment = Alignment.center,
   }) : podProgressBarConfig =
-            podProgressBarConfig ?? const PodProgressBarConfig();
+           podProgressBarConfig ?? const PodProgressBarConfig();
 
   final PodProgressBarConfig podProgressBarConfig;
   final void Function()? onDragStart;
@@ -31,7 +31,9 @@ class PodProgressBar extends StatefulWidget {
 }
 
 class _PodProgressBarState extends State<PodProgressBar> {
-  late final _podCtr = Get.find<PodGetXVideoController>(tag: widget.tag);
+  late final PodGetXVideoController _podCtr = Get.find<PodGetXVideoController>(
+    tag: widget.tag,
+  );
   late VideoPlayerValue? videoPlayerValue = _podCtr.videoCtr?.value;
   bool _controllerWasPlaying = false;
 
@@ -60,7 +62,7 @@ class _PodProgressBarState extends State<PodProgressBar> {
             return GestureDetector(
               behavior: HitTestBehavior.opaque,
               child: _progressBar(size),
-              onHorizontalDragStart: (DragStartDetails details) {
+              onHorizontalDragStart: (details) {
                 if (!videoPlayerValue!.isInitialized) {
                   return;
                 }
@@ -74,7 +76,7 @@ class _PodProgressBarState extends State<PodProgressBar> {
                   widget.onDragStart?.call();
                 }
               },
-              onHorizontalDragUpdate: (DragUpdateDetails details) {
+              onHorizontalDragUpdate: (details) {
                 if (!videoPlayerValue!.isInitialized) {
                   return;
                 }
@@ -83,7 +85,7 @@ class _PodProgressBarState extends State<PodProgressBar> {
 
                 widget.onDragUpdate?.call();
               },
-              onHorizontalDragEnd: (DragEndDetails details) {
+              onHorizontalDragEnd: (details) {
                 if (_controllerWasPlaying) {
                   podCtr.videoCtr?.play();
                 }
@@ -93,7 +95,7 @@ class _PodProgressBarState extends State<PodProgressBar> {
                   widget.onDragEnd?.call();
                 }
               },
-              onTapDown: (TapDownDetails details) {
+              onTapDown: (details) {
                 if (!videoPlayerValue!.isInitialized) {
                   return;
                 }
@@ -123,9 +125,11 @@ class _PodProgressBarState extends State<PodProgressBar> {
                 painter: _ProgressBarPainter(
                   videoPlayerValue!,
                   podProgressBarConfig: widget.podProgressBarConfig.copyWith(
-                    circleHandlerRadius: podCtr.isOverlayVisible ||
+                    circleHandlerRadius:
+                        podCtr.isOverlayVisible ||
                             widget
-                                .podProgressBarConfig.alwaysVisibleCircleHandler
+                                .podProgressBarConfig
+                                .alwaysVisibleCircleHandler
                         ? widget.podProgressBarConfig.circleHandlerRadius
                         : 0,
                   ),
@@ -163,12 +167,12 @@ class _ProgressBarPainter extends CustomPainter {
         podProgressBarConfig!.circleHandlerRadius;
     final Paint backgroundPaint =
         podProgressBarConfig!.getBackgroundPaint != null
-            ? podProgressBarConfig!.getBackgroundPaint!(
-                width: width,
-                height: height,
-                circleHandlerRadius: circleHandlerRadius,
-              )
-            : Paint()
+              ? podProgressBarConfig!.getBackgroundPaint!(
+                  width: width,
+                  height: height,
+                  circleHandlerRadius: circleHandlerRadius,
+                )
+              : Paint()
           ..color = podProgressBarConfig!.backgroundColor;
 
     canvas.drawRRect(
@@ -181,30 +185,32 @@ class _ProgressBarPainter extends CustomPainter {
       ),
       backgroundPaint,
     );
-    if (value.isInitialized == false) {
+    if (!value.isInitialized) {
       return;
     }
 
     final double playedPartPercent =
         value.position.inMilliseconds / value.duration.inMilliseconds;
-    final double playedPart =
-        playedPartPercent > 1 ? width : playedPartPercent * width;
+    final double playedPart = playedPartPercent > 1
+        ? width
+        : playedPartPercent * width;
 
     for (final DurationRange range in value.buffered) {
       final double start = range.startFraction(value.duration) * width;
       final double end = range.endFraction(value.duration) * width;
 
-      final Paint bufferedPaint = podProgressBarConfig!.getBufferedPaint != null
-          ? podProgressBarConfig!.getBufferedPaint!(
-              width: width,
-              height: height,
-              playedPart: playedPart,
-              circleHandlerRadius: circleHandlerRadius,
-              bufferedStart: start,
-              bufferedEnd: end,
-            )
-          : Paint()
-        ..color = podProgressBarConfig!.bufferedBarColor;
+      final Paint bufferedPaint =
+          podProgressBarConfig!.getBufferedPaint != null
+                ? podProgressBarConfig!.getBufferedPaint!(
+                    width: width,
+                    height: height,
+                    playedPart: playedPart,
+                    circleHandlerRadius: circleHandlerRadius,
+                    bufferedStart: start,
+                    bufferedEnd: end,
+                  )
+                : Paint()
+            ..color = podProgressBarConfig!.bufferedBarColor;
 
       canvas.drawRRect(
         RRect.fromRectAndRadius(
@@ -218,15 +224,16 @@ class _ProgressBarPainter extends CustomPainter {
       );
     }
 
-    final Paint playedPaint = podProgressBarConfig!.getPlayedPaint != null
-        ? podProgressBarConfig!.getPlayedPaint!(
-            width: width,
-            height: height,
-            playedPart: playedPart,
-            circleHandlerRadius: circleHandlerRadius,
-          )
-        : Paint()
-      ..color = podProgressBarConfig!.playingBarColor;
+    final Paint playedPaint =
+        podProgressBarConfig!.getPlayedPaint != null
+              ? podProgressBarConfig!.getPlayedPaint!(
+                  width: width,
+                  height: height,
+                  playedPart: playedPart,
+                  circleHandlerRadius: circleHandlerRadius,
+                )
+              : Paint()
+          ..color = podProgressBarConfig!.playingBarColor;
     canvas.drawRRect(
       RRect.fromRectAndRadius(
         Rect.fromPoints(
@@ -240,13 +247,13 @@ class _ProgressBarPainter extends CustomPainter {
 
     final Paint handlePaint =
         podProgressBarConfig!.getCircleHandlerPaint != null
-            ? podProgressBarConfig!.getCircleHandlerPaint!(
-                width: width,
-                height: height,
-                playedPart: playedPart,
-                circleHandlerRadius: circleHandlerRadius,
-              )
-            : Paint()
+              ? podProgressBarConfig!.getCircleHandlerPaint!(
+                  width: width,
+                  height: height,
+                  playedPart: playedPart,
+                  circleHandlerRadius: circleHandlerRadius,
+                )
+              : Paint()
           ..color = podProgressBarConfig!.circleHandlerColor;
 
     canvas.drawCircle(

@@ -1,19 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:pod_player/pod_player.dart';
+import 'package:pod_player_plus/pod_player_plus.dart';
 
 void main(List<String> args) {
   runApp(const YoutubeApp());
 }
 
 class YoutubeApp extends StatelessWidget {
-  const YoutubeApp({Key? key}) : super(key: key);
+  const YoutubeApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        appBar:
-            AppBar(title: const Text('Load youtube video from quality urls')),
+        appBar: AppBar(
+          title: const Text('Load youtube video from quality urls'),
+        ),
         body: const YoutubeVideoViewer(),
       ),
     );
@@ -21,7 +22,7 @@ class YoutubeApp extends StatelessWidget {
 }
 
 class YoutubeVideoViewer extends StatefulWidget {
-  const YoutubeVideoViewer({Key? key}) : super(key: key);
+  const YoutubeVideoViewer({super.key});
 
   @override
   State<YoutubeVideoViewer> createState() => _YoutubeVideoViewerState();
@@ -44,7 +45,7 @@ class _YoutubeVideoViewerState extends State<YoutubeVideoViewer> {
     controller = PodPlayerController(
       playVideoFrom: PlayVideoFrom.networkQualityUrls(videoUrls: urls!),
       podPlayerConfig: const PodPlayerConfig(
-        videoQualityPriority: [360],
+        videoQualityPriority: [1080, 720, 360],
       ),
     )..initialise();
   }

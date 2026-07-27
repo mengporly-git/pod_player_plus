@@ -81,10 +81,12 @@ class _DoubleTapIconState extends State<DoubleTapIcon>
       onDoubleTap: _onDoubleTap,
       rippleColor: Colors.white,
       wrapper: (parentWidget, curveRadius) {
-        final forwardRadius =
-            !widget.isForward ? Radius.zero : Radius.circular(curveRadius);
-        final backwardRadius =
-            widget.isForward ? Radius.zero : Radius.circular(curveRadius);
+        final forwardRadius = !widget.isForward
+            ? Radius.zero
+            : Radius.circular(curveRadius);
+        final backwardRadius = widget.isForward
+            ? Radius.zero
+            : Radius.circular(curveRadius);
         return ClipRRect(
           borderRadius: BorderRadius.only(
             bottomLeft: forwardRadius,
@@ -152,7 +154,7 @@ class _DoubleTapIconState extends State<DoubleTapIcon>
                         duration: const Duration(milliseconds: 300),
                         opacity: opacityCtr.value,
                         child: Text(
-                          '${podCtr.isLeftDbTapIconVisible ? podCtr.leftDoubleTapduration : podCtr.rightDubleTapduration} Sec',
+                          '${podCtr.isLeftDbTapIconVisible ? podCtr.leftDoubleTapDuration : podCtr.rightDubleTapDuration} Sec',
                           style: const TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
@@ -165,7 +167,7 @@ class _DoubleTapIconState extends State<DoubleTapIcon>
                         duration: const Duration(milliseconds: 300),
                         opacity: opacityCtr.value,
                         child: Text(
-                          '${podCtr.isLeftDbTapIconVisible ? podCtr.leftDoubleTapduration : podCtr.rightDubleTapduration} Sec',
+                          '${podCtr.isLeftDbTapIconVisible ? podCtr.leftDoubleTapDuration : podCtr.rightDubleTapDuration} Sec',
                           style: const TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,

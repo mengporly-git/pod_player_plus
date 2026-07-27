@@ -1,11 +1,21 @@
 import 'dart:convert';
 import 'dart:developer';
 
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 import '../models/vimeo_models.dart';
+
+class _YoutubeManifestResult {
+  const _YoutubeManifestResult({
+    required this.manifest,
+    required this.useMuxedOnly,
+  });
+
+  final StreamManifest manifest;
+  final bool useMuxedOnly;
+}
 
 String podErrorString(String val) {
   return '*\n------error------\n\n$val\n\n------end------\n*';
@@ -30,43 +40,7 @@ class VideoApis {
   ) async {
     try {
       final response = await _makeRequestHash(videoId, hash);
-      final jsonData = jsonDecode(response.body)['request']['files'];
-      final dashData = jsonData['dash'];
-      final hlsData = jsonData['hls'];
-      final defaultCDN = hlsData['default_cdn'];
-      final cdnVideoUrl = (hlsData['cdns'][defaultCDN]['url'] as String?) ?? '';
-      final List<dynamic> rawStreamUrls =
-          (dashData['streams'] as List<dynamic>?) ?? <dynamic>[];
-
-      final List<VideoQalityUrls> vimeoQualityUrls = [];
-
-      for (final item in rawStreamUrls) {
-        final sepList = cdnVideoUrl.split('/sep/video/');
-        final firstUrlPiece = sepList.firstOrNull ?? '';
-        final lastUrlPiece =
-            ((sepList.lastOrNull ?? '').split('/').lastOrNull) ??
-                (sepList.lastOrNull ?? '');
-        final String urlId =
-            ((item['id'] ?? '') as String).split('-').firstOrNull ?? '';
-        vimeoQualityUrls.add(
-          VideoQalityUrls(
-            quality: int.parse(
-              (item['quality'] as String?)?.split('p').first ?? '0',
-            ),
-            url: '$firstUrlPiece/sep/video/$urlId/$lastUrlPiece',
-          ),
-        );
-      }
-      if (vimeoQualityUrls.isEmpty) {
-        vimeoQualityUrls.add(
-          VideoQalityUrls(
-            quality: 720,
-            url: cdnVideoUrl,
-          ),
-        );
-      }
-
-      return vimeoQualityUrls;
+      return parseVimeoConfigResponse(response);
     } catch (error) {
       if (error.toString().contains('XMLHttpRequest')) {
         log(
@@ -80,6 +54,77 @@ class VideoApis {
     }
   }
 
+  @visibleForTesting
+  static List<VideoQalityUrls> parseVimeoConfigResponse(Response response) {
+    final responseJson = _decodeVimeoResponse(
+      response,
+      endpointName: 'player configuration',
+    );
+    final request = _asStringMap(responseJson['request']);
+    final files = _asStringMap(request?['files']);
+    if (files == null) {
+      throw const VimeoApiException(
+        message: 'Vimeo did not return playback files for this video.',
+      );
+    }
+
+    final progressiveUrls = _parseVimeoProgressiveUrls(files['progressive']);
+    if (progressiveUrls.isNotEmpty) {
+      return progressiveUrls;
+    }
+
+    final fallbackUrl = _getVimeoAdaptiveFallback(files);
+    if (fallbackUrl != null) {
+      return [
+        VideoQalityUrls(
+          quality: 720,
+          url: fallbackUrl,
+        ),
+      ];
+    }
+
+    throw const VimeoApiException(
+      message:
+          'No compatible progressive, HLS, or DASH playback URL was returned.',
+    );
+  }
+
+  static List<VideoQalityUrls> _parseVimeoProgressiveUrls(Object? rawUrls) {
+    if (rawUrls is! List) return [];
+
+    final urlsByQuality = <int, String>{};
+    for (final rawUrl in rawUrls) {
+      final item = _asStringMap(rawUrl);
+      final url = item?['url'];
+      final quality = _parseQuality(item?['quality']);
+      if (url is String && url.isNotEmpty && quality != null) {
+        urlsByQuality[quality] = url;
+      }
+    }
+
+    return urlsByQuality.entries
+        .map(
+          (entry) => VideoQalityUrls(
+            quality: entry.key,
+            url: entry.value,
+          ),
+        )
+        .toList()
+      ..sort((a, b) => a.quality.compareTo(b.quality));
+  }
+
+  static String? _getVimeoAdaptiveFallback(Map<String, dynamic> files) {
+    for (final formatName in const ['hls', 'dash']) {
+      final format = _asStringMap(files[formatName]);
+      final defaultCdn = format?['default_cdn'];
+      final cdns = _asStringMap(format?['cdns']);
+      final cdn = _asStringMap(cdns?[defaultCdn]);
+      final url = cdn?['url'];
+      if (url is String && url.isNotEmpty) return url;
+    }
+    return null;
+  }
+
   static Future<List<VideoQalityUrls>?> getVimeoPrivateVideoQualityUrls(
     String videoId,
     Map<String, String> httpHeader,
@@ -89,8 +134,11 @@ class VideoApis {
         Uri.parse('https://api.vimeo.com/videos/$videoId'),
         headers: httpHeader,
       );
-      final jsonData =
-          (jsonDecode(response.body)['files'] as List<dynamic>?) ?? [];
+      final responseJson = _decodeVimeoResponse(
+        response,
+        endpointName: 'Vimeo API',
+      );
+      final jsonData = (responseJson['files'] as List<dynamic>?) ?? [];
 
       final List<VideoQalityUrls> list = [];
       for (int i = 0; i < jsonData.length; i++) {
@@ -120,12 +168,63 @@ class VideoApis {
     }
   }
 
+  static Map<String, dynamic> _decodeVimeoResponse(
+    Response response, {
+    required String endpointName,
+  }) {
+    final isSuccess = response.statusCode >= 200 && response.statusCode < 300;
+    if (!isSuccess) {
+      final blockedIp = response.headers['x-banned-ip'];
+      final apiError = _tryDecodeJsonMap(response.body);
+      final apiMessage =
+          apiError?['developer_message'] ?? apiError?['error'] ?? '';
+      final message = blockedIp == null
+          ? '$endpointName request failed'
+                '${apiMessage is String && apiMessage.isNotEmpty ? ': $apiMessage' : '.'}'
+          : 'Vimeo blocked playback requests from this network IP '
+                '($blockedIp). Try another network or use the authenticated '
+                'Vimeo API.';
+      throw VimeoApiException(
+        message: message,
+        statusCode: response.statusCode,
+      );
+    }
+
+    final responseJson = _tryDecodeJsonMap(response.body);
+    if (responseJson == null) {
+      throw VimeoApiException(
+        message:
+            '$endpointName returned ${response.headers['content-type'] ?? 'a non-JSON response'} instead of JSON.',
+        statusCode: response.statusCode,
+      );
+    }
+    return responseJson;
+  }
+
+  static Map<String, dynamic>? _tryDecodeJsonMap(String body) {
+    try {
+      return _asStringMap(jsonDecode(body));
+    } on FormatException {
+      return null;
+    }
+  }
+
+  static Map<String, dynamic>? _asStringMap(Object? value) {
+    if (value is! Map) return null;
+    return value.map((key, value) => MapEntry(key.toString(), value));
+  }
+
+  static int? _parseQuality(Object? value) {
+    final match = RegExp(r'\d+').firstMatch(value?.toString() ?? '');
+    return match == null ? null : int.tryParse(match.group(0)!);
+  }
+
   static Future<List<VideoQalityUrls>?> getYoutubeVideoQualityUrls(
     String youtubeIdOrUrl,
     bool live,
   ) async {
+    final yt = YoutubeExplode();
     try {
-      final yt = YoutubeExplode();
       final urls = <VideoQalityUrls>[];
       if (live) {
         final url = await yt.videos.streamsClient.getHttpLiveStreamUrl(
@@ -138,19 +237,23 @@ class VideoApis {
           ),
         );
       } else {
-        final manifest =
-            await yt.videos.streamsClient.getManifest(youtubeIdOrUrl);
-        urls.addAll(
-          manifest.muxed.map(
-            (element) => VideoQalityUrls(
-              quality: int.parse(element.qualityLabel.split('p')[0]),
-              url: element.url.toString(),
-            ),
-          ),
+        final manifestResult = await _getYoutubeManifest(
+          yt,
+          VideoId(youtubeIdOrUrl),
         );
+        final supportsAdaptivePlayback =
+            _supportsAdaptiveYoutubePlayback && !manifestResult.useMuxedOnly;
+
+        if (supportsAdaptivePlayback) {
+          urls.addAll(
+            _getAdaptiveYoutubeQualityUrls(manifestResult.manifest),
+          );
+        }
+
+        if (urls.isEmpty) {
+          urls.addAll(_getMuxedYoutubeQualityUrls(manifestResult.manifest));
+        }
       }
-      // Close the YoutubeExplode's http client.
-      yt.close();
       return urls;
     } catch (error) {
       if (error.toString().contains('XMLHttpRequest')) {
@@ -162,6 +265,113 @@ class VideoApis {
       }
       debugPrint('===== YOUTUBE API ERROR: $error ==========');
       rethrow;
+    } finally {
+      yt.close();
     }
+  }
+
+  static Future<_YoutubeManifestResult> _getYoutubeManifest(
+    YoutubeExplode yt,
+    VideoId videoId,
+  ) async {
+    if (_supportsAdaptiveYoutubePlayback) {
+      try {
+        final manifest = await yt.videos.streamsClient.getManifest(
+          videoId,
+          ytClients: const [YoutubeApiClient.androidVr],
+        );
+        return _YoutubeManifestResult(
+          manifest: manifest,
+          useMuxedOnly: false,
+        );
+      } on Object catch (error) {
+        debugPrint(
+          'Adaptive YouTube manifest failed; '
+          'falling back to muxed playback: $error',
+        );
+      }
+    }
+
+    return _YoutubeManifestResult(
+      manifest: await yt.videos.streamsClient.getManifest(videoId),
+      useMuxedOnly: true,
+    );
+  }
+
+  static bool get _supportsAdaptiveYoutubePlayback =>
+      !kIsWeb &&
+      (defaultTargetPlatform == TargetPlatform.android ||
+          defaultTargetPlatform == TargetPlatform.iOS);
+
+  static List<VideoQalityUrls> _getAdaptiveYoutubeQualityUrls(
+    StreamManifest manifest,
+  ) {
+    final videoStreams = manifest.videoOnly
+        .where((stream) => stream.videoCodec.contains('avc'))
+        .toList();
+    final audioStreams =
+        manifest.audioOnly
+            .where((stream) => stream.audioCodec.contains('mp4a'))
+            .toList()
+          ..sort((a, b) => b.bitrate.compareTo(a.bitrate));
+
+    if (videoStreams.isEmpty || audioStreams.isEmpty) {
+      return [];
+    }
+
+    final audioUrl = audioStreams.first.url.toString();
+    final streamsByQuality = <int, VideoOnlyStreamInfo>{};
+    for (final stream in videoStreams) {
+      final quality = _parseYoutubeQuality(stream.qualityLabel);
+      if (quality == null) continue;
+
+      final existing = streamsByQuality[quality];
+      if (existing == null ||
+          stream.framerate.compareTo(existing.framerate) > 0 ||
+          (stream.framerate == existing.framerate &&
+              stream.bitrate.compareTo(existing.bitrate) > 0)) {
+        streamsByQuality[quality] = stream;
+      }
+    }
+
+    return streamsByQuality.entries
+        .map(
+          (entry) => VideoQalityUrls(
+            quality: entry.key,
+            url: entry.value.url.toString(),
+            audioUrl: audioUrl,
+          ),
+        )
+        .toList();
+  }
+
+  static List<VideoQalityUrls> _getMuxedYoutubeQualityUrls(
+    StreamManifest manifest,
+  ) {
+    final urlsByQuality = <int, MuxedStreamInfo>{};
+    for (final stream in manifest.muxed) {
+      if (!stream.videoCodec.contains('avc')) continue;
+      final quality = _parseYoutubeQuality(stream.qualityLabel);
+      if (quality == null) continue;
+
+      final existing = urlsByQuality[quality];
+      if (existing == null || stream.bitrate.compareTo(existing.bitrate) > 0) {
+        urlsByQuality[quality] = stream;
+      }
+    }
+
+    return urlsByQuality.entries
+        .map(
+          (entry) => VideoQalityUrls(
+            quality: entry.key,
+            url: entry.value.url.toString(),
+          ),
+        )
+        .toList();
+  }
+
+  static int? _parseYoutubeQuality(String qualityLabel) {
+    final match = RegExp(r'\d+').firstMatch(qualityLabel);
+    return match == null ? null : int.tryParse(match.group(0)!);
   }
 }

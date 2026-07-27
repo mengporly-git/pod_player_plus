@@ -1,9 +1,11 @@
 part of 'pod_getx_video_controller.dart';
-// ignore_for_file: prefer_final_fields
 
 class _PodBaseController extends GetxController {
   ///main video controller
   VideoPlayerController? _videoCtr;
+  VideoPlayerController? _audioCtr;
+  Timer? _audioSyncTimer;
+  bool _isSynchronizingAudio = false;
 
   ///
   late PodVideoPlayerType _videoPlayerType;
@@ -39,7 +41,7 @@ class _PodBaseController extends GetxController {
 
   ///**listners
 
-  Future<void> videoListner() async {
+  Future<void> videoListener() async {
     if (!_videoCtr!.value.isInitialized) {
       await _videoCtr!.initialize();
     }
@@ -105,7 +107,7 @@ class _PodBaseController extends GetxController {
     }
   }
 
-  void keyboadListner() {
+  void keyboardListener() {
     if (keyboardFocusWeb != null && !keyboardFocusWeb!.hasFocus) {
       if (keyboardFocusWeb!.canRequestFocus) {
         keyboardFocusWeb!.requestFocus();

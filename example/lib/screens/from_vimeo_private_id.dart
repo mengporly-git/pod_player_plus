@@ -1,8 +1,10 @@
-import 'package:pod_player/pod_player.dart';
+import 'dart:async';
+
+import 'package:pod_player_plus/pod_player_plus.dart';
 import 'package:flutter/material.dart';
 
 class PlayVideoFromVimeoPrivateId extends StatefulWidget {
-  const PlayVideoFromVimeoPrivateId({Key? key}) : super(key: key);
+  const PlayVideoFromVimeoPrivateId({super.key});
 
   @override
   State<PlayVideoFromVimeoPrivateId> createState() =>
@@ -17,10 +19,22 @@ class _PlayVideoFromVimeoPrivateIdState
 
   @override
   void initState() {
+    super.initState();
     controller = PodPlayerController(
       playVideoFrom: PlayVideoFrom.vimeo('518228118'),
-    )..initialise();
-    super.initState();
+    );
+    unawaited(_initialiseController());
+  }
+
+  Future<void> _initialiseController() async {
+    try {
+      await controller.initialise();
+    } on Object catch (error) {
+      if (!mounted) return;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) snackBar('Unable to load Vimeo video:\n$error');
+      });
+    }
   }
 
   @override
@@ -40,7 +54,7 @@ class _PlayVideoFromVimeoPrivateIdState
             children: [
               PodVideoPlayer(controller: controller),
               const SizedBox(height: 40),
-              _loadVideoFromUrl()
+              _loadVideoFromUrl(),
             ],
           ),
         ),
@@ -117,10 +131,6 @@ class _PlayVideoFromVimeoPrivateIdState
   void snackBar(String text) {
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
-      ..showSnackBar(
-        SnackBar(
-          content: Text(text),
-        ),
-      );
+      ..showSnackBar(SnackBar(content: Text(text)));
   }
 }

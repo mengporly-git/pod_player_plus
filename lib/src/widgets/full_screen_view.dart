@@ -1,4 +1,4 @@
-part of 'package:pod_player/src/pod_player.dart';
+part of 'package:pod_player_plus/src/pod_player.dart';
 
 class FullScreenView extends StatefulWidget {
   final String tag;
@@ -18,7 +18,7 @@ class _FullScreenViewState extends State<FullScreenView>
   void initState() {
     _podCtr = Get.find<PodGetXVideoController>(tag: widget.tag);
     _podCtr.fullScreenContext = context;
-    _podCtr.keyboardFocusWeb?.removeListener(_podCtr.keyboadListner);
+    _podCtr.keyboardFocusWeb?.removeListener(_podCtr.keyboardListener);
 
     super.initState();
   }
@@ -26,30 +26,31 @@ class _FullScreenViewState extends State<FullScreenView>
   @override
   void dispose() {
     _podCtr.keyboardFocusWeb?.requestFocus();
-    _podCtr.keyboardFocusWeb?.addListener(_podCtr.keyboadListner);
+    _podCtr.keyboardFocusWeb?.addListener(_podCtr.keyboardListener);
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final loadingWidget = _podCtr.onLoading?.call(context) ??
+    final loadingWidget =
+        _podCtr.onLoading?.call(context) ??
         const CircularProgressIndicator(
           backgroundColor: Colors.black87,
           color: Colors.white,
           strokeWidth: 2,
         );
 
-    return WillPopScope(
-      onWillPop: () async {
-        if (kIsWeb) {
-          await _podCtr.disableFullScreen(
-            context,
-            widget.tag,
-            enablePop: false,
+    return PopScope(
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) {
+          unawaited(
+            _podCtr.disableFullScreen(
+              context,
+              widget.tag,
+              enablePop: false,
+            ),
           );
         }
-        if (!kIsWeb) await _podCtr.disableFullScreen(context, widget.tag);
-        return true;
       },
       child: Scaffold(
         backgroundColor: Colors.black,
@@ -65,13 +66,13 @@ class _FullScreenViewState extends State<FullScreenView>
                   child: podCtr.videoCtr == null
                       ? loadingWidget
                       : podCtr.videoCtr!.value.isInitialized
-                          ? _PodCoreVideoPlayer(
-                              tag: widget.tag,
-                              videoPlayerCtr: podCtr.videoCtr!,
-                              videoAspectRatio:
-                                  podCtr.videoCtr?.value.aspectRatio ?? 16 / 9,
-                            )
-                          : loadingWidget,
+                      ? _PodCoreVideoPlayer(
+                          tag: widget.tag,
+                          videoPlayerCtr: podCtr.videoCtr!,
+                          videoAspectRatio:
+                              podCtr.videoCtr?.value.aspectRatio ?? 16 / 9,
+                        )
+                      : loadingWidget,
                 ),
               ),
             ),

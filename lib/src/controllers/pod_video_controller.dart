@@ -25,7 +25,12 @@ class _PodVideoController extends _PodUiController {
   ///*seek video
   /// Seek video to a duration.
   Future<void> seekTo(Duration moment) async {
-    await _videoCtr!.seekTo(moment);
+    final wasPlaying = _videoCtr?.value.isPlaying ?? false;
+    await _pausePlaybackControllers();
+    await _seekPlaybackControllers(moment);
+    if (wasPlaying) {
+      await _playPlaybackControllers();
+    }
   }
 
   /// Seek video forward by the duration.
@@ -61,12 +66,15 @@ class _PodVideoController extends _PodUiController {
     update(['update-all']);
   }
 
-// Set volume between 0.0 - 1.0,
+  // Set volume between 0.0 - 1.0,
   /// 0.0 is mute and 1.0 max volume.
   Future<void> setVolume(
     double volume,
   ) async {
-    await _videoCtr?.setVolume(volume);
+    await Future.wait([
+      if (_videoCtr != null) _videoCtr!.setVolume(volume),
+      if (_audioCtr != null) _audioCtr!.setVolume(volume),
+    ]);
     if (volume <= 0) {
       isMute = true;
     } else {
@@ -81,13 +89,11 @@ class _PodVideoController extends _PodUiController {
     isvideoPlaying = val;
     if (isvideoPlaying) {
       isShowOverlay(true);
-      // ignore: unawaited_futures
-      _videoCtr?.play();
+      await _playPlaybackControllers();
       isShowOverlay(false, delay: const Duration(seconds: 1));
     } else {
       isShowOverlay(true);
-      // ignore: unawaited_futures
-      _videoCtr?.pause();
+      await _pausePlaybackControllers();
     }
   }
 
@@ -134,29 +140,149 @@ class _PodVideoController extends _PodUiController {
     }
   }
 
-  void setVideoPlayBack(String speed) {
-    late double pickedSpeed;
-
-    if (speed == 'Normal') {
-      pickedSpeed = 1.0;
-      _currentPaybackSpeed = 'Normal';
-    } else {
-      pickedSpeed = double.parse(speed.split('x').first);
-      _currentPaybackSpeed = speed;
-    }
-    _videoCtr?.setPlaybackSpeed(pickedSpeed);
+  Future<void> setVideoPlayBack(String speed) async {
+    _currentPaybackSpeed = speed;
+    await Future.wait([
+      if (_videoCtr != null) _videoCtr!.setPlaybackSpeed(_playbackSpeedValue),
+      if (_audioCtr != null) _audioCtr!.setPlaybackSpeed(_playbackSpeedValue),
+    ]);
   }
+
+  double get _playbackSpeedValue => _currentPaybackSpeed == 'Normal'
+      ? 1
+      : double.parse(_currentPaybackSpeed.split('x').first);
 
   Future<void> setLooping(bool isLooped) async {
     isLooping = isLooped;
-    await _videoCtr?.setLooping(isLooping);
+    await Future.wait([
+      if (_videoCtr != null) _videoCtr!.setLooping(isLooping),
+      if (_audioCtr != null) _audioCtr!.setLooping(isLooping),
+    ]);
   }
 
   Future<void> toggleLooping() async {
     isLooping = !isLooping;
-    await _videoCtr?.setLooping(isLooping);
+    await Future.wait([
+      if (_videoCtr != null) _videoCtr!.setLooping(isLooping),
+      if (_audioCtr != null) _audioCtr!.setLooping(isLooping),
+    ]);
     update();
     update(['update-all']);
+  }
+
+  VideoPlayerController? _createAudioController(String? audioUrl) {
+    if (audioUrl == null) return null;
+    return VideoPlayerController.networkUrl(
+      Uri.parse(audioUrl),
+      videoPlayerOptions: VideoPlayerOptions(mixWithOthers: true),
+    );
+  }
+
+  Future<void> _playPlaybackControllers() async {
+    final videoController = _videoCtr;
+    if (videoController == null) return;
+
+    final audioController = _audioCtr;
+    if (audioController != null) {
+      final drift =
+          audioController.value.position - videoController.value.position;
+      if (drift.abs() > const Duration(milliseconds: 250)) {
+        await audioController.seekTo(videoController.value.position);
+      }
+    }
+
+    await videoController.play();
+    if (audioController != null) {
+      await audioController.play();
+      _startAudioSynchronization();
+    }
+  }
+
+  Future<void> _pausePlaybackControllers() async {
+    _stopAudioSynchronization();
+    await Future.wait([
+      if (_audioCtr != null) _audioCtr!.pause(),
+      if (_videoCtr != null) _videoCtr!.pause(),
+    ]);
+  }
+
+  Future<void> _seekPlaybackControllers(Duration position) async {
+    final videoController = _videoCtr;
+    if (videoController == null) return;
+
+    await videoController.seekTo(position);
+    final actualPosition = videoController.value.position;
+    if (_audioCtr != null) {
+      await _audioCtr!.seekTo(actualPosition);
+    }
+  }
+
+  void _startAudioSynchronization() {
+    _audioSyncTimer?.cancel();
+    _audioSyncTimer = Timer.periodic(
+      const Duration(milliseconds: 250),
+      (_) => unawaited(_synchronizeAudio()),
+    );
+  }
+
+  void _stopAudioSynchronization() {
+    _audioSyncTimer?.cancel();
+    _audioSyncTimer = null;
+  }
+
+  Future<void> _synchronizeAudio() async {
+    if (_isSynchronizingAudio) return;
+
+    final videoController = _videoCtr;
+    final audioController = _audioCtr;
+    if (videoController == null ||
+        audioController == null ||
+        !videoController.value.isInitialized ||
+        !audioController.value.isInitialized) {
+      return;
+    }
+
+    _isSynchronizingAudio = true;
+    try {
+      if (!videoController.value.isPlaying) {
+        if (audioController.value.isPlaying) {
+          await audioController.pause();
+        }
+        return;
+      }
+
+      if (videoController.value.isBuffering) {
+        if (audioController.value.isPlaying) {
+          await audioController.pause();
+        }
+        return;
+      }
+
+      final drift =
+          audioController.value.position - videoController.value.position;
+      if (drift.abs() > const Duration(milliseconds: 400)) {
+        await audioController.seekTo(videoController.value.position);
+      }
+      if (!audioController.value.isPlaying &&
+          !audioController.value.isBuffering) {
+        await audioController.play();
+      }
+    } finally {
+      _isSynchronizingAudio = false;
+    }
+  }
+
+  Future<void> disposePlaybackControllers() async {
+    _stopAudioSynchronization();
+    final videoController = _videoCtr;
+    final audioController = _audioCtr;
+    videoController?.removeListener(videoListener);
+    _videoCtr = null;
+    _audioCtr = null;
+    await Future.wait([
+      if (videoController != null) videoController.dispose(),
+      if (audioController != null) audioController.dispose(),
+    ]);
   }
 
   Future<void> enableFullScreen(String tag) async {
@@ -206,7 +332,7 @@ class _PodVideoController extends _PodUiController {
               SystemUiMode.manual,
               overlays: SystemUiOverlay.values,
             ),
-          ]
+          ],
         ]);
       }
 
@@ -230,15 +356,15 @@ class _PodVideoController extends _PodUiController {
         mainContext,
         PageRouteBuilder<dynamic>(
           fullscreenDialog: true,
-          pageBuilder: (BuildContext context, _, __) => FullScreenView(
+          pageBuilder: (context, _, _) => FullScreenView(
             tag: tag,
           ),
           reverseTransitionDuration: const Duration(milliseconds: 400),
           transitionsBuilder: (context, animation, secondaryAnimation, child) =>
               FadeTransition(
-            opacity: animation,
-            child: child,
-          ),
+                opacity: animation,
+                child: child,
+              ),
         ),
       );
     }

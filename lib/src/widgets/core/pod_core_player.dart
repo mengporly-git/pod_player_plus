@@ -1,4 +1,4 @@
-part of 'package:pod_player/src/pod_player.dart';
+part of 'package:pod_player_plus/src/pod_player.dart';
 
 class _PodCoreVideoPlayer extends StatelessWidget {
   final VideoPlayerController videoPlayerCtr;
@@ -16,12 +16,12 @@ class _PodCoreVideoPlayer extends StatelessWidget {
     final podCtr = Get.find<PodGetXVideoController>(tag: tag);
     return Builder(
       builder: (ctrx) {
-        return RawKeyboardListener(
+        return KeyboardListener(
           autofocus: true,
           focusNode:
               (podCtr.isFullScreen ? FocusNode() : podCtr.keyboardFocusWeb) ??
-                  FocusNode(),
-          onKey: (value) => podCtr.onKeyBoardEvents(
+              FocusNode(),
+          onKeyEvent: (value) => podCtr.onKeyBoardEvents(
             event: value,
             appContext: ctrx,
             tag: tag,
@@ -74,7 +74,8 @@ class _PodCoreVideoPlayer extends StatelessWidget {
                   tag: tag,
                   id: 'podVideoState',
                   builder: (podCtr) {
-                    final loadingWidget = podCtr.onLoading?.call(context) ??
+                    final loadingWidget =
+                        podCtr.onLoading?.call(context) ??
                         const Center(
                           child: CircularProgressIndicator(
                             backgroundColor: Colors.transparent,
@@ -132,7 +133,8 @@ class _PodCoreVideoPlayer extends StatelessWidget {
                       : GetBuilder<PodGetXVideoController>(
                           tag: tag,
                           id: 'overlay',
-                          builder: (podCtr) => podCtr.isOverlayVisible ||
+                          builder: (podCtr) =>
+                              podCtr.isOverlayVisible ||
                                   !podCtr.alwaysShowProgressBar
                               ? const SizedBox()
                               : Align(

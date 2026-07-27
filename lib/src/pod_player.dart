@@ -6,28 +6,20 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:universal_html/html.dart' as uni_html;
 
-import '../pod_player.dart';
+import '../pod_player_plus.dart';
 import 'controllers/pod_getx_video_controller.dart';
 import 'utils/logger.dart';
 import 'widgets/double_tap_icon.dart';
 import 'widgets/material_icon_button.dart';
 
 part 'widgets/animated_play_pause_icon.dart';
-
 part 'widgets/core/overlays/mobile_bottomsheet.dart';
-
 part 'widgets/core/overlays/mobile_overlay.dart';
-
 part 'widgets/core/overlays/overlays.dart';
-
 part 'widgets/core/overlays/web_dropdown_menu.dart';
-
 part 'widgets/core/overlays/web_overlay.dart';
-
 part 'widgets/core/pod_core_player.dart';
-
 part 'widgets/core/video_gesture_detector.dart';
-
 part 'widgets/full_screen_view.dart';
 
 class PodVideoPlayer extends StatefulWidget {
@@ -81,7 +73,6 @@ class PodVideoPlayer extends StatefulWidget {
 
   void addToUiController() {
     Get.find<PodGetXVideoController>(tag: controller.getTag)
-
       ///add to ui controller
       ..podPlayerLabels = podPlayerLabels
       ..alwaysShowProgressBar = alwaysShowProgressBar
@@ -117,7 +108,7 @@ class _PodVideoPlayerState extends State<PodVideoPlayer>
     if (kIsWeb) {
       if (widget.controller.podPlayerConfig.forcedVideoFocus) {
         _podCtr.keyboardFocusWeb = FocusNode();
-        _podCtr.keyboardFocusWeb?.addListener(_podCtr.keyboadListner);
+        _podCtr.keyboardFocusWeb?.addListener(_podCtr.keyboardListener);
       }
       //to disable mouse right click
       uni_html.document.onContextMenu.listen((event) => event.preventDefault());
@@ -138,7 +129,7 @@ class _PodVideoPlayerState extends State<PodVideoPlayer>
       ..isVideoUiBinded = false
       ..podVideoStateChanger(PodVideoState.paused, updateUi: false);
     if (kIsWeb) {
-      _podCtr.keyboardFocusWeb?.removeListener(_podCtr.keyboadListner);
+      _podCtr.keyboardFocusWeb?.removeListener(_podCtr.keyboardListener);
     }
     // _podCtr.keyboardFocus?.unfocus();
     // _podCtr.keyboardFocusOnFullScreen?.unfocus();

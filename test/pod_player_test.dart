@@ -9,7 +9,6 @@ void main() {
     final updated = config.copyWith(autoPlay: false);
 
     expect(config.autoPlay, isTrue);
-    expect(config.wakelockEnabled, isTrue);
     expect(updated.autoPlay, isFalse);
     expect(updated.videoQualityPriority, [1080, 720, 360]);
   });

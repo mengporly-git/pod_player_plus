@@ -1,3 +1,8 @@
+## 0.3.1
+
+- Removed the `wakelock_plus` dependency and the `wakelockEnabled`
+  configuration option.
+
 ## 0.3.0
 
 - Renamed the package to `pod_player_plus`.

@@ -1,34 +1,22 @@
 PODS:
   - FlutterMacOS (1.0.0)
-  - package_info_plus (0.0.1):
-    - FlutterMacOS
   - video_player_avfoundation (0.0.1):
     - Flutter
-    - FlutterMacOS
-  - wakelock_plus (0.0.1):
     - FlutterMacOS
 
 DEPENDENCIES:
   - FlutterMacOS (from `Flutter/ephemeral`)
-  - package_info_plus (from `Flutter/ephemeral/.symlinks/plugins/package_info_plus/macos`)
   - video_player_avfoundation (from `Flutter/ephemeral/.symlinks/plugins/video_player_avfoundation/darwin`)
-  - wakelock_plus (from `Flutter/ephemeral/.symlinks/plugins/wakelock_plus/macos`)
 
 EXTERNAL SOURCES:
   FlutterMacOS:
     :path: Flutter/ephemeral
-  package_info_plus:
-    :path: Flutter/ephemeral/.symlinks/plugins/package_info_plus/macos
   video_player_avfoundation:
     :path: Flutter/ephemeral/.symlinks/plugins/video_player_avfoundation/darwin
-  wakelock_plus:
-    :path: Flutter/ephemeral/.symlinks/plugins/wakelock_plus/macos
 
 SPEC CHECKSUMS:
   FlutterMacOS: d0db08ddef1a9af05a5ec4b724367152bb0500b1
-  package_info_plus: 12f1c5c2cfe8727ca46cbd0b26677728972d9a5b
   video_player_avfoundation: e54d03b3b19f64f2c557354f72ce538387541ba6
-  wakelock_plus: 9d63063ffb7af1c215209769067c57103bde719d
 
 PODFILE CHECKSUM: 0d3963a09fc94f580682bd88480486da345dc3f0
 

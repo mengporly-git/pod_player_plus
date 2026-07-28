@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 class DoubleTapRippleEffect extends StatefulWidget {
@@ -105,15 +107,17 @@ class _DoubleTapRippleEffectState extends State<DoubleTapRippleEffect>
   // checking animation status is completed
   void _animStatus() {
     if (_anim.status == AnimationStatus.completed) {
-      Future<void>.delayed(
-        widget.rippleEndingDuraiton ?? const Duration(milliseconds: 600),
-      ).then((value) {
-        setState(() {
-          _animRadiusValue = 0;
-        });
-        // stoping animation after completed
-        _animationController.stop();
-      });
+      unawaited(
+        Future<void>.delayed(
+          widget.rippleEndingDuraiton ?? const Duration(milliseconds: 600),
+        ).then((value) {
+          setState(() {
+            _animRadiusValue = 0;
+          });
+          // stoping animation after completed
+          _animationController.stop();
+        }),
+      );
     }
   }
 
@@ -134,11 +138,9 @@ class _DoubleTapRippleEffectState extends State<DoubleTapRippleEffect>
     // adding [_animationController] to [_tweenanim] to animate
     _anim = _tweenAnim.animate(_animationController);
 
-    _animationController
-      // resetting [_animationController] before start
-      ..reset()
-      // starting [_animationController] to start animation
-      ..forward();
+    // Resetting [_animationController] before starting the animation.
+    _animationController.reset();
+    unawaited(_animationController.forward());
   }
 
   @override

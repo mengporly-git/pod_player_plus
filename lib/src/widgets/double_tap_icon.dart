@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -69,9 +71,11 @@ class _DoubleTapIconState extends State<DoubleTapIcon>
 
   void _onDoubleTap() {
     widget.onDoubleTap();
-    _animationController.forward().then((_) {
-      _animationController.reverse();
-    });
+    unawaited(
+      _animationController.forward().then((_) {
+        unawaited(_animationController.reverse());
+      }),
+    );
   }
 
   @override

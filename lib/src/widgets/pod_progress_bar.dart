@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:get/instance_manager.dart';
@@ -44,7 +46,7 @@ class _PodProgressBarState extends State<PodProgressBar> {
       final double relative = tapPos.dx / box.size.width;
       final Duration position =
           (videoPlayerValue?.duration ?? Duration.zero) * relative;
-      _podCtr.seekTo(position);
+      unawaited(_podCtr.seekTo(position));
     }
   }
 
@@ -69,7 +71,7 @@ class _PodProgressBarState extends State<PodProgressBar> {
                 _controllerWasPlaying =
                     podCtr.videoCtr?.value.isPlaying ?? false;
                 if (_controllerWasPlaying) {
-                  podCtr.videoCtr?.pause();
+                  unawaited(podCtr.videoCtr?.pause());
                 }
 
                 if (widget.onDragStart != null) {
@@ -87,7 +89,7 @@ class _PodProgressBarState extends State<PodProgressBar> {
               },
               onHorizontalDragEnd: (details) {
                 if (_controllerWasPlaying) {
-                  podCtr.videoCtr?.play();
+                  unawaited(podCtr.videoCtr?.play());
                 }
                 podCtr.toggleVideoOverlay();
 

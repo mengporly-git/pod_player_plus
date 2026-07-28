@@ -99,7 +99,7 @@ class _WebSettingsDropdownState extends State<_WebSettingsDropdown> {
                 title: Text(e),
               ),
               onTap: () {
-                podCtr.setVideoPlayBack(e);
+                unawaited(podCtr.setVideoPlayBack(e));
               },
             ),
           )
@@ -128,8 +128,10 @@ class _WebSettingsDropdownState extends State<_WebSettingsDropdown> {
                 title: Text('${e.quality}p'),
               ),
               onTap: () {
-                podCtr.changeVideoQuality(
-                  e.quality,
+                unawaited(
+                  podCtr.changeVideoQuality(
+                    e.quality,
+                  ),
                 );
               },
             ),

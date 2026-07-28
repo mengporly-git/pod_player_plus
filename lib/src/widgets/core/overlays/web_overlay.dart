@@ -192,18 +192,20 @@ class _WebOverlayBottomControlles extends StatelessWidget {
       if (podCtr.isFullScreen) {
         if (kIsWeb) {
           uni_html.document.exitFullscreen();
-          podCtr.disableFullScreen(context, tag);
+          unawaited(podCtr.disableFullScreen(context, tag));
           return;
         } else {
-          podCtr.disableFullScreen(context, tag);
+          unawaited(podCtr.disableFullScreen(context, tag));
         }
       } else {
         if (kIsWeb) {
+          // The web API returns a Future, while universal_html's VM stub is void.
+          // ignore: discarded_futures
           uni_html.document.documentElement?.requestFullscreen();
-          podCtr.enableFullScreen(tag);
+          unawaited(podCtr.enableFullScreen(tag));
           return;
         } else {
-          podCtr.enableFullScreen(tag);
+          unawaited(podCtr.enableFullScreen(tag));
         }
       }
     } else {

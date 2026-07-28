@@ -211,7 +211,7 @@ class PodGetXVideoController extends _PodGesturesController {
         return;
       }
       if (key == LogicalKeyboardKey.keyM) {
-        toggleMute();
+        unawaited(toggleMute());
         return;
       }
       if (key == LogicalKeyboardKey.arrowLeft) {
@@ -229,7 +229,7 @@ class PodGetXVideoController extends _PodGesturesController {
         if (isFullScreen) {
           uni_html.document.exitFullscreen();
           if (!isWebPopupOverlayOpen) {
-            disableFullScreen(appContext, tag);
+            unawaited(disableFullScreen(appContext, tag));
           }
         }
       }
@@ -242,11 +242,13 @@ class PodGetXVideoController extends _PodGesturesController {
     if (isFullScreen) {
       uni_html.document.exitFullscreen();
       if (!isWebPopupOverlayOpen) {
-        disableFullScreen(context, tag);
+        unawaited(disableFullScreen(context, tag));
       }
     } else {
+      // The web API returns a Future, while universal_html's VM stub is void.
+      // ignore: discarded_futures
       uni_html.document.documentElement?.requestFullscreen();
-      enableFullScreen(tag);
+      unawaited(enableFullScreen(tag));
     }
   }
 

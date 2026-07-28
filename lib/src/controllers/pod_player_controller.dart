@@ -52,7 +52,7 @@ class PodPlayerController {
         } else {
           podLog('$getTag Pod Player Controller Already Initialized');
         }
-      } catch (error) {
+      } on Object catch (error) {
         podLog('$getTag Pod Player Controller failed to initialize');
         _initializationError = error;
       }
@@ -134,15 +134,19 @@ class PodPlayerController {
   ///
   /// It only adds a listener if the player is successfully initialized
   void addListener(VoidCallback listener) {
-    _checkAndWaitTillInitialized().then(
-      (value) => _ctr.videoCtr?.addListener(listener),
+    unawaited(
+      _checkAndWaitTillInitialized().then(
+        (value) => _ctr.videoCtr?.addListener(listener),
+      ),
     );
   }
 
   /// Remove registered listeners
   void removeListener(VoidCallback listener) {
-    _checkAndWaitTillInitialized().then(
-      (value) => _ctr.videoCtr?.removeListener(listener),
+    unawaited(
+      _checkAndWaitTillInitialized().then(
+        (value) => _ctr.videoCtr?.removeListener(listener),
+      ),
     );
   }
 
@@ -164,9 +168,11 @@ class PodPlayerController {
     _isCtrInitialised = false;
     unawaited(_ctr.disposePlaybackControllers());
     _ctr.removeListenerId('podVideoState', _ctr.podStateListner);
-    Get.delete<PodGetXVideoController>(
-      force: true,
-      tag: getTag,
+    unawaited(
+      Get.delete<PodGetXVideoController>(
+        force: true,
+        tag: getTag,
+      ),
     );
     podLog('$getTag Pod player Disposed');
   }
@@ -224,8 +230,10 @@ class PodPlayerController {
   /// If onToggleFullScreen is set, you must handle the device
   /// orientation by yourself.
   void enableFullScreen() {
+    // The web API returns a Future, while universal_html's VM stub is void.
+    // ignore: discarded_futures
     uni_html.document.documentElement?.requestFullscreen();
-    _ctr.enableFullScreen(getTag);
+    unawaited(_ctr.enableFullScreen(getTag));
   }
 
   /// Disables fullscreen mode.
@@ -236,7 +244,7 @@ class PodPlayerController {
     uni_html.document.exitFullscreen();
 
     if (!_ctr.isWebPopupOverlayOpen) {
-      _ctr.disableFullScreen(context, getTag);
+      unawaited(_ctr.disableFullScreen(context, getTag));
     }
   }
 

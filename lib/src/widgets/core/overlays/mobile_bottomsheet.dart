@@ -22,12 +22,14 @@ class _MobileBottomSheet extends StatelessWidget {
               onTap: () {
                 Navigator.of(context).pop();
                 Timer(const Duration(milliseconds: 100), () {
-                  showModalBottomSheet<void>(
-                    context: context,
-                    builder: (context) => SafeArea(
-                      child: _VideoQualitySelectorMob(
-                        tag: tag,
-                        onTap: null,
+                  unawaited(
+                    showModalBottomSheet<void>(
+                      context: context,
+                      builder: (context) => SafeArea(
+                        child: _VideoQualitySelectorMob(
+                          tag: tag,
+                          onTap: null,
+                        ),
                       ),
                     ),
                   );
@@ -45,7 +47,7 @@ class _MobileBottomSheet extends StatelessWidget {
                 : podCtr.podPlayerLabels.optionDisabled,
             onTap: () {
               Navigator.of(context).pop();
-              podCtr.toggleLooping();
+              unawaited(podCtr.toggleLooping());
             },
           ),
           _bottomSheetTiles(
@@ -55,13 +57,15 @@ class _MobileBottomSheet extends StatelessWidget {
             onTap: () {
               Navigator.of(context).pop();
               Timer(const Duration(milliseconds: 100), () {
-                showModalBottomSheet<void>(
-                  context: context,
-                  isScrollControlled: true,
-                  builder: (context) => SafeArea(
-                    child: _VideoPlaybackSelectorMob(
-                      tag: tag,
-                      onTap: null,
+                unawaited(
+                  showModalBottomSheet<void>(
+                    context: context,
+                    isScrollControlled: true,
+                    builder: (context) => SafeArea(
+                      child: _VideoPlaybackSelectorMob(
+                        tag: tag,
+                        onTap: null,
+                      ),
                     ),
                   ),
                 );
@@ -137,7 +141,7 @@ class _VideoQualitySelectorMob extends StatelessWidget {
                 onTap: () {
                   onTap != null ? onTap!() : Navigator.of(context).pop();
 
-                  podCtr.changeVideoQuality(e.quality);
+                  unawaited(podCtr.changeVideoQuality(e.quality));
                 },
               ),
             )
@@ -168,7 +172,7 @@ class _VideoPlaybackSelectorMob extends StatelessWidget {
                 title: Text(e),
                 onTap: () {
                   onTap != null ? onTap!() : Navigator.of(context).pop();
-                  podCtr.setVideoPlayBack(e);
+                  unawaited(podCtr.setVideoPlayBack(e));
                 },
               ),
             )
@@ -232,9 +236,9 @@ class _MobileOverlayBottomControlles extends StatelessWidget {
                 onPressed: () {
                   if (podCtr.isOverlayVisible) {
                     if (podCtr.isFullScreen) {
-                      podCtr.disableFullScreen(context, tag);
+                      unawaited(podCtr.disableFullScreen(context, tag));
                     } else {
-                      podCtr.enableFullScreen(tag);
+                      unawaited(podCtr.enableFullScreen(tag));
                     }
                   } else {
                     podCtr.toggleVideoOverlay();

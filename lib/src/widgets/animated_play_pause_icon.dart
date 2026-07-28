@@ -26,7 +26,7 @@ class _AnimatedPlayPauseIconState extends State<_AnimatedPlayPauseIcon>
     );
     _podCtr.addListenerId('podVideoState', playPauseListner);
     if (_podCtr.isvideoPlaying) {
-      if (mounted) _payCtr.forward();
+      if (mounted) unawaited(_payCtr.forward());
     }
     super.initState();
   }
@@ -34,10 +34,10 @@ class _AnimatedPlayPauseIconState extends State<_AnimatedPlayPauseIcon>
   void playPauseListner() {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       if (_podCtr.podVideoState == PodVideoState.playing) {
-        if (mounted) _payCtr.forward();
+        if (mounted) unawaited(_payCtr.forward());
       }
       if (_podCtr.podVideoState == PodVideoState.paused) {
-        if (mounted) _payCtr.reverse();
+        if (mounted) unawaited(_payCtr.reverse());
       }
     });
   }

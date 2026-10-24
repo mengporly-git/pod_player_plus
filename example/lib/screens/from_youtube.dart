@@ -15,9 +15,7 @@ class _PlayVideoFromVimeoIdState extends State<PlayVideoFromYoutube> {
   @override
   void initState() {
     controller = PodPlayerController(
-      playVideoFrom: PlayVideoFrom.youtube(
-        'https://www.youtube.com/watch?v=39pzq8SdnbU',
-      ),
+      playVideoFrom: PlayVideoFrom.youtube('https://www.youtube.com/watch?v=0jSgcE-sxeo'),
       podPlayerConfig: const PodPlayerConfig(
         videoQualityPriority: [1080, 720, 360],
         autoPlay: false,
@@ -41,15 +39,7 @@ class _PlayVideoFromVimeoIdState extends State<PlayVideoFromYoutube> {
           child: ListView(
             shrinkWrap: true,
             children: [
-              PodVideoPlayer(
-                controller: controller,
-                videoThumbnail: const DecorationImage(
-                  image: NetworkImage(
-                    'https://images.unsplash.com/photo-1569317002804-ab77bcf1bce4?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MXx8dW5zcGxhc2h8ZW58MHx8MHx8&w=1000&q=80',
-                  ),
-                  fit: BoxFit.cover,
-                ),
-              ),
+              PodVideoPlayer(controller: controller),
               const SizedBox(height: 40),
               _loadVideoFromUrl(),
             ],
@@ -59,46 +49,49 @@ class _PlayVideoFromVimeoIdState extends State<PlayVideoFromYoutube> {
     );
   }
 
-  Row _loadVideoFromUrl() {
-    return Row(
-      children: [
-        Expanded(
-          flex: 2,
-          child: TextField(
+  Widget _loadVideoFromUrl() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+      child: Column(
+        spacing: 8,
+        children: [
+          TextField(
             controller: videoTextFieldCtr,
             decoration: const InputDecoration(
               labelText: 'Enter youtube url/id',
               floatingLabelBehavior: FloatingLabelBehavior.always,
-              hintText: 'https://www.youtube.com/watch?v=39pzq8SdnbU',
+              hintText: 'https://www.youtube.com/watch?v=0jSgcE-sxeo',
               border: OutlineInputBorder(),
             ),
           ),
-        ),
-        const SizedBox(width: 10),
-        FocusScope(
-          canRequestFocus: false,
-          child: ElevatedButton(
-            onPressed: () async {
-              if (videoTextFieldCtr.text.isEmpty) {
-                snackBar('Please enter the url');
-                return;
-              }
-              try {
-                snackBar('Loading....');
-                FocusScope.of(context).unfocus();
-                await controller.changeVideo(
-                  playVideoFrom: PlayVideoFrom.youtube(videoTextFieldCtr.text),
-                );
-                if (!mounted) return;
-                ScaffoldMessenger.of(context).hideCurrentSnackBar();
-              } catch (e) {
-                snackBar('Unable to load,\n $e');
-              }
-            },
-            child: const Text('Load Video'),
+          const SizedBox(width: 10),
+          FocusScope(
+            canRequestFocus: false,
+            child: ElevatedButton(
+              onPressed: () async {
+                if (videoTextFieldCtr.text.isEmpty) {
+                  snackBar('Please enter the url');
+                  return;
+                }
+                try {
+                  snackBar('Loading....');
+                  FocusScope.of(context).unfocus();
+                  await controller.changeVideo(
+                    playVideoFrom: PlayVideoFrom.youtube(
+                      videoTextFieldCtr.text,
+                    ),
+                  );
+                  if (!mounted) return;
+                  ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                } catch (e) {
+                  snackBar('Unable to load,\n $e');
+                }
+              },
+              child: const Text('Load Video'),
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 

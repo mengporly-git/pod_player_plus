@@ -20,10 +20,10 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/video_player_avfoundation/darwin"
 
 SPEC CHECKSUMS:
-  Flutter: cabc95a1d2626b1b06e7179b784ebcf0c0cde467
+  Flutter: 71a624a5bc0c04062bf19101d501e466baf2fb47
   integration_test: 252f60fa39af5e17c3aa9899d35d908a0721b573
   video_player_avfoundation: e54d03b3b19f64f2c557354f72ce538387541ba6
 
-PODFILE CHECKSUM: d2243213672c3c48aae53c36642ba411a6be7309
+PODFILE CHECKSUM: cdddfa9a860416e122205d962ea41bf3029a8aaa
 
 COCOAPODS: 1.16.2

@@ -7,21 +7,38 @@ import 'package:http/http.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 import '../models/vimeo_models.dart';
 
-class _YoutubeManifestResult {
-  const _YoutubeManifestResult({
-    required this.manifest,
-    required this.useMuxedOnly,
-  });
-
-  final StreamManifest manifest;
-  final bool useMuxedOnly;
-}
-
 String podErrorString(String val) {
   return '*\n------error------\n\n$val\n\n------end------\n*';
 }
 
 class VideoApis {
+  static String? getYoutubeThumbnailUrl(String youtubeIdOrUrl) {
+    final id = VideoId.parseVideoId(youtubeIdOrUrl.trim());
+    return id == null ? null : ThumbnailSet(id).highResUrl;
+  }
+
+  // Upstream extractor client update: youtube_explode_dart PR #389.
+  // This client needs the watch-page session supplied by getManifest.
+  static const _youtubeVisionOsClient = YoutubeApiClient({
+    'context': {
+      'client': {
+        'clientName': 'VISIONOS',
+        'clientVersion': '1.02',
+        'deviceMake': 'Apple',
+        'deviceModel': 'RealityDevice17,1',
+        'osName': 'visionOS',
+        'osVersion': '26.5.23O471',
+        'userAgent':
+            'Mozilla/5.0 (Macintosh; Intel Mac OS X 15_7_3) '
+            'AppleWebKit/605.1.15 (KHTML, like Gecko) '
+            'Version/26.0 Safari/605.1.15',
+        'hl': 'en',
+        'timeZone': 'UTC',
+        'utcOffsetMinutes': 0,
+      },
+    },
+  }, 'https://www.youtube.com/youtubei/v1/player?prettyPrint=false');
+
   static Future<Response> _makeRequestHash(String videoId, String? hash) {
     if (hash == null) {
       return http.get(
@@ -224,35 +241,35 @@ class VideoApis {
     bool live,
   ) async {
     final yt = YoutubeExplode();
+    final playbackClient = http.Client();
+    final checks = <String, Future<bool>>{};
+    Future<bool> canPlay(String url) => checks.putIfAbsent(
+      url,
+      () => validateYoutubeStream(url, playbackClient),
+    );
     try {
       final urls = <VideoQalityUrls>[];
       if (live) {
         final url = await yt.videos.streamsClient.getHttpLiveStreamUrl(
           VideoId(youtubeIdOrUrl),
         );
-        urls.add(
-          VideoQalityUrls(
-            quality: 360,
-            url: url,
+        urls.add(VideoQalityUrls(quality: 360, url: url));
+      } else {
+        urls.addAll(
+          await loadYoutubeQualityUrls(
+            (clients) => yt.videos.streamsClient.getManifest(
+              VideoId(youtubeIdOrUrl),
+              ytClients: clients,
+            ),
+            isPlayable: (quality) async {
+              if (quality.audioUrl != null &&
+                  !await canPlay(quality.audioUrl!)) {
+                return false;
+              }
+              return await canPlay(quality.url);
+            },
           ),
         );
-      } else {
-        final manifestResult = await _getYoutubeManifest(
-          yt,
-          VideoId(youtubeIdOrUrl),
-        );
-        final supportsAdaptivePlayback =
-            _supportsAdaptiveYoutubePlayback && !manifestResult.useMuxedOnly;
-
-        if (supportsAdaptivePlayback) {
-          urls.addAll(
-            _getAdaptiveYoutubeQualityUrls(manifestResult.manifest),
-          );
-        }
-
-        if (urls.isEmpty) {
-          urls.addAll(_getMuxedYoutubeQualityUrls(manifestResult.manifest));
-        }
       }
       return urls;
     } catch (error) {
@@ -266,36 +283,90 @@ class VideoApis {
       debugPrint('===== YOUTUBE API ERROR: $error ==========');
       rethrow;
     } finally {
+      playbackClient.close();
       yt.close();
     }
   }
 
-  static Future<_YoutubeManifestResult> _getYoutubeManifest(
-    YoutubeExplode yt,
-    VideoId videoId,
+  /// Checks both native loading and a range beyond YouTube's preview bytes.
+  @visibleForTesting
+  static Future<bool> validateYoutubeStream(
+    String url,
+    http.Client client,
   ) async {
+    final uri = Uri.parse(url);
+    final length = int.tryParse(uri.queryParameters['clen'] ?? '');
+    final probes = <String?>[
+      null,
+      if (length != null && length > 0)
+        'bytes=${length > 1024 ? length - 1024 : 0}-${length - 1}',
+    ];
+    try {
+      for (final range in probes) {
+        final request = http.Request('GET', uri);
+        if (range != null) request.headers['Range'] = range;
+        final response = await client
+            .send(request)
+            .timeout(const Duration(seconds: 12));
+        final isSuccess =
+            response.statusCode == 200 || response.statusCode == 206;
+        await response.stream
+            .take(1)
+            .drain<void>()
+            .timeout(const Duration(seconds: 12));
+        if (!isSuccess) return false;
+      }
+      return true;
+    } on Exception {
+      return false;
+    }
+  }
+
+  /// Resolves playable qualities without discarding adaptive fallback streams.
+  @visibleForTesting
+  static Future<List<VideoQalityUrls>> loadYoutubeQualityUrls(
+    Future<StreamManifest> Function(List<YoutubeApiClient>? clients)
+    loadManifest, {
+    Future<bool> Function(VideoQalityUrls quality)? isPlayable,
+  }) async {
+    Future<List<VideoQalityUrls>> playable(List<VideoQalityUrls> urls) async {
+      if (isPlayable == null) return urls;
+      final results = await Future.wait(urls.map(isPlayable));
+      return [
+        for (var i = 0; i < urls.length; i++)
+          if (results[i]) urls[i],
+      ];
+    }
+
+    var primaryMuxedUrls = <VideoQalityUrls>[];
     if (_supportsAdaptiveYoutubePlayback) {
       try {
-        final manifest = await yt.videos.streamsClient.getManifest(
-          videoId,
-          ytClients: const [YoutubeApiClient.androidVr],
-        );
-        return _YoutubeManifestResult(
-          manifest: manifest,
-          useMuxedOnly: false,
-        );
+        final manifest = await loadManifest(const [_youtubeVisionOsClient]);
+        primaryMuxedUrls = _getMuxedYoutubeQualityUrls(manifest);
+        final urls = await playable(_getAdaptiveYoutubeQualityUrls(manifest));
+        if (urls.isNotEmpty) return urls;
       } on Object catch (error) {
         debugPrint(
-          'Adaptive YouTube manifest failed; '
-          'falling back to muxed playback: $error',
+          'Primary YouTube manifest failed; trying the default client: $error',
         );
       }
     }
 
-    return _YoutubeManifestResult(
-      manifest: await yt.videos.streamsClient.getManifest(videoId),
-      useMuxedOnly: true,
-    );
+    try {
+      final manifest = await loadManifest(null);
+      // The default client can also supply HD video and separate audio, even
+      // when the primary client was blocked. Only use muxed streams if needed.
+      if (_supportsAdaptiveYoutubePlayback) {
+        final urls = await playable(_getAdaptiveYoutubeQualityUrls(manifest));
+        if (urls.isNotEmpty) return urls;
+      }
+      final muxedUrls = await playable(_getMuxedYoutubeQualityUrls(manifest));
+      return muxedUrls.isEmpty ? await playable(primaryMuxedUrls) : muxedUrls;
+    } on Object {
+      final urls = await playable(primaryMuxedUrls);
+      if (urls.isNotEmpty) return urls;
+      rethrow;
+    }
   }
 
   static bool get _supportsAdaptiveYoutubePlayback =>

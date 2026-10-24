@@ -1,6 +1,63 @@
 part of 'pod_getx_video_controller.dart';
 
 class _PodVideoController extends _PodUiController {
+  bool _hasDurationCorrection = false;
+  bool _isFinishingPlayback = false;
+
+  void _correctYoutubePlaybackDuration(
+    VideoPlayerController? video,
+    VideoPlayerController? audio,
+  ) {
+    _hasDurationCorrection = false;
+    if (_videoPlayerType != PodVideoPlayerType.youtube) return;
+    if (video != null) {
+      _hasDurationCorrection = correctYoutubeDuration(video);
+    }
+    if (audio != null) correctYoutubeDuration(audio);
+  }
+
+  @override
+  Future<void> videoListener() async {
+    await super.videoListener();
+    final video = _videoCtr;
+    if (!_hasDurationCorrection ||
+        _isFinishingPlayback ||
+        video == null ||
+        !video.value.isPlaying) {
+      return;
+    }
+
+    final value = video.value;
+    final remaining = value.duration - value.position;
+    // AVFoundation can stall on the final frame while buffering the empty
+    // tail. Only accept that frame when the actual content is fully buffered.
+    final isBufferedEnd =
+        value.isBuffering &&
+        remaining <= const Duration(milliseconds: 100) &&
+        value.buffered.any((range) => range.end >= value.duration);
+    if (remaining > Duration.zero && !isBufferedEnd) return;
+
+    // The native asset may contain an empty tail after the actual content.
+    // Stop or loop both tracks at the corrected end instead of waiting for it.
+    _isFinishingPlayback = true;
+    try {
+      await _pausePlaybackControllers();
+      if (isLooping) {
+        await _seekPlaybackControllers(Duration.zero);
+        await _playPlaybackControllers();
+      } else {
+        video.value = video.value.copyWith(
+          position: video.value.duration,
+          isCompleted: true,
+          isBuffering: false,
+        );
+        podVideoStateChanger(PodVideoState.paused);
+      }
+    } finally {
+      _isFinishingPlayback = false;
+    }
+  }
+
   Timer? showOverlayTimer;
   Timer? showOverlayTimer1;
 
@@ -181,6 +238,11 @@ class _PodVideoController extends _PodUiController {
   Future<void> _playPlaybackControllers() async {
     final videoController = _videoCtr;
     if (videoController == null) return;
+
+    if (videoController.value.isInitialized &&
+        videoController.value.position >= videoController.value.duration) {
+      await _seekPlaybackControllers(Duration.zero);
+    }
 
     final audioController = _audioCtr;
     if (audioController != null) {

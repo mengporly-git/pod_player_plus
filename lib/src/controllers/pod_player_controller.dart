@@ -41,9 +41,6 @@ class PodPlayerController {
   ///
   /// If the provided video cannot be loaded, an exception could be thrown.
   Future<void> initialise() async {
-    if (!_isCtrInitialised) {
-      _init();
-    }
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
       try {
         if (!_isCtrInitialised) {

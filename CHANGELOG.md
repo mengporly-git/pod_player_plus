@@ -1,3 +1,14 @@
+## 0.3.2
+
+- Correct doubled iOS YouTube durations using stream metadata, including seek
+  bounds, quality changes, completion, and looping.
+- Automatically show the current YouTube video's thumbnail when no custom
+  `videoThumbnail` is supplied.
+- Added native-only YouTube HD playback using an updated extractor client and
+  watch-page session, with 1080p preferred before 720p and 360p.
+- Validate native loading and end-of-stream byte ranges before exposing a quality
+  so preview-only URLs that later return HTTP 403 are excluded.
+
 ## 0.3.1
 
 - Removed the `wakelock_plus` dependency and the `wakelockEnabled`

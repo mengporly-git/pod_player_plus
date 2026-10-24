@@ -42,7 +42,8 @@ class _PodCoreVideoPlayer extends StatelessWidget {
                   tag: tag,
                   id: 'video-progress',
                   builder: (podCtr) {
-                    if (podCtr.videoThumbnail == null) {
+                    final thumbnail = podCtr.resolvedVideoThumbnail;
+                    if (thumbnail == null) {
                       return const SizedBox();
                     }
 
@@ -58,7 +59,7 @@ class _PodCoreVideoPlayer extends StatelessWidget {
                           duration: const Duration(milliseconds: 400),
                           child: DecoratedBox(
                             decoration: BoxDecoration(
-                              image: podCtr.videoThumbnail,
+                              image: thumbnail,
                             ),
                           ),
                         ),

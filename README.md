@@ -268,6 +268,10 @@ class _PlayVideoFromNetworkState extends State<PlayVideoFromNetwork> {
 
 ## Add Thumbnail
 
+For YouTube videos, omitting `videoThumbnail` automatically shows the current
+video's YouTube thumbnail while loading and before playback starts. Supplying
+`videoThumbnail` overrides it.
+
 ```dart
 PodVideoPlayer(
   controller: controller,
@@ -342,11 +346,28 @@ class _PlayVideoFromYoutubeState extends State<PlayVideoFromYoutube> {
 
 ### YouTube quality support
 
-On Android and iOS, non-live YouTube videos use adaptive playback:
-high-resolution video (including 720p and 1080p when supplied by YouTube) is
-synchronized with a separate audio stream. Web uses YouTube's muxed stream
-fallback, which is commonly limited to 360p. Live and restricted videos also
-use the available fallback stream.
+`PlayVideoFrom.youtube(...)` uses `video_player` with Pod controls. Playback
+stays inside the app, without an iframe, recommendations, or YouTube navigation.
+On Android and iOS, 1080p is the default first choice when YouTube supplies a
+playable stream; the next choices are 720p and 360p.
+
+YouTube HD streams contain video and audio separately. Pod synchronizes both
+streams and uses an updated extractor client with its watch-page session.
+Before offering a quality, it checks native loading and the end of each stream
+to reject URLs that serve preview bytes but later return HTTP 403.
+
+You can configure the native quality preference:
+
+```dart
+podPlayerConfig: const PodPlayerConfig(
+  videoQualityPriority: [1080, 720, 360],
+),
+```
+
+Everything runs in the Flutter app; no backend is used. YouTube can still
+restrict extraction or change its clients. A blocked or unavailable HD stream
+cannot be forced; the player uses another playable quality when available.
+Web continues to use muxed streams and remains subject to browser CORS limits.
 
 ## How to play video from vimeo
 

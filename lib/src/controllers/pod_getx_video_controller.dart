@@ -10,6 +10,7 @@ import 'package:universal_html/html.dart' as uni_html;
 import '../../pod_player_plus.dart';
 import '../utils/logger.dart';
 import '../utils/video_apis.dart';
+import '../utils/youtube_duration.dart';
 
 part 'pod_base_controller.dart';
 part 'pod_gestures_controller.dart';
@@ -38,6 +39,24 @@ class PodGetXVideoController extends _PodGesturesController {
   bool controllerInitialized = false;
   late PodPlayerConfig podPlayerConfig;
   late PlayVideoFrom playVideoFrom;
+
+  /// Uses the current YouTube video's thumbnail unless one was supplied.
+  DecorationImage? get resolvedVideoThumbnail {
+    if (videoThumbnail != null) return videoThumbnail;
+    if (playVideoFrom.playerType != PodVideoPlayerType.youtube) return null;
+    final source = playVideoFrom.dataSource;
+    final url = source == null
+        ? null
+        : VideoApis.getYoutubeThumbnailUrl(source);
+    if (url == null) return null;
+    return DecorationImage(
+      image: NetworkImage(url),
+      fit: BoxFit.cover,
+      // An unavailable thumbnail must not interrupt loading or playback.
+      onError: (error, stackTrace) {},
+    );
+  }
+
   void config({
     required PlayVideoFrom playVideoFrom,
     required PodPlayerConfig playerConfig,
@@ -47,6 +66,7 @@ class PodGetXVideoController extends _PodGesturesController {
     podPlayerConfig = playerConfig;
     autoPlay = playerConfig.autoPlay;
     isLooping = playerConfig.isLooping;
+    update();
   }
 
   ///*init
@@ -60,6 +80,7 @@ class PodGetXVideoController extends _PodGesturesController {
         if (_videoCtr != null) _videoCtr!.initialize(),
         if (_audioCtr != null) _audioCtr!.initialize(),
       ]);
+      _correctYoutubePlaybackDuration(_videoCtr, _audioCtr);
       _videoDuration = _videoCtr?.value.duration ?? Duration.zero;
       await setLooping(isLooping);
       _videoCtr?.addListener(videoListener);

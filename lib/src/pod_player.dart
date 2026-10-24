@@ -35,6 +35,8 @@ class PodVideoPlayer extends StatefulWidget {
   final Widget Function()? onVideoError;
   final Widget? videoTitle;
   final Color? backgroundColor;
+
+  /// Optional custom thumbnail. YouTube videos use their own when omitted.
   final DecorationImage? videoThumbnail;
 
   /// Optional callback, fired when full screen mode toggles.
@@ -146,7 +148,6 @@ class _PodVideoPlayerState extends State<PodVideoPlayer>
 
   @override
   Widget build(BuildContext context) {
-    final circularProgressIndicator = _thumbnailAndLoadingWidget();
     _podCtr.mainContext = context;
 
     final videoErrorWidget = AspectRatio(
@@ -191,7 +192,7 @@ class _PodVideoPlayerState extends State<PodVideoPlayer>
                   aspectRatio: _frameAspectRatio,
                   child: podCtr.videoCtr?.value.isInitialized ?? false
                       ? _buildPlayer()
-                      : Center(child: circularProgressIndicator),
+                      : Center(child: _thumbnailAndLoadingWidget()),
                 );
               },
             ),
@@ -211,7 +212,8 @@ class _PodVideoPlayerState extends State<PodVideoPlayer>
   }
 
   Widget _thumbnailAndLoadingWidget() {
-    if (widget.videoThumbnail == null) {
+    final thumbnail = _podCtr.resolvedVideoThumbnail;
+    if (thumbnail == null) {
       return _buildLoading();
     }
 
@@ -224,7 +226,7 @@ class _PodVideoPlayerState extends State<PodVideoPlayer>
         tween: Tween<double>(begin: 0.2, end: 0.7),
         duration: const Duration(milliseconds: 400),
         child: DecoratedBox(
-          decoration: BoxDecoration(image: widget.videoThumbnail),
+          decoration: BoxDecoration(image: thumbnail),
           child: Center(
             child: _buildLoading(),
           ),

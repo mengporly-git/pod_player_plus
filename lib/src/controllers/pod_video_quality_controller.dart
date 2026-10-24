@@ -147,6 +147,7 @@ class _PodVideoQualityController extends _PodVideoController {
         newVideoController.initialize(),
         if (newAudioController != null) newAudioController.initialize(),
       ]);
+      _correctYoutubePlaybackDuration(newVideoController, newAudioController);
 
       await Future.wait([
         newVideoController.setLooping(isLooping),

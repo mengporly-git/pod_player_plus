@@ -15,10 +15,7 @@ class _PodVideoQualityController extends _PodVideoController {
   ///*vimeo player configs
   ///
   ///get all  `quality urls`
-  Future<void> getQualityUrlsFromVimeoId(
-    String videoId, {
-    String? hash,
-  }) async {
+  Future<void> getQualityUrlsFromVimeoId(String videoId, {String? hash}) async {
     try {
       podVideoStateChanger(PodVideoState.loading);
       final vimeoVideoUrls = await VideoApis.getVimeoVideoQualityUrls(
@@ -51,9 +48,7 @@ class _PodVideoQualityController extends _PodVideoController {
     }
   }
 
-  void sortQualityVideoUrls(
-    List<VideoQalityUrls>? urls,
-  ) {
+  void sortQualityVideoUrls(List<VideoQalityUrls>? urls) {
     final urls0 = urls;
 
     ///has issues with 240p

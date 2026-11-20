@@ -1,6 +1,6 @@
-import 'package:pod_player_plus/pod_player_plus.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
+import 'package:pod_player_plus/pod_player_plus.dart';
 
 class PlayVideoFromNetwork extends StatefulWidget {
   const PlayVideoFromNetwork({super.key});
@@ -68,8 +68,7 @@ class _PlayVideoFromAssetState extends State<PlayVideoFromNetwork> {
             decoration: const InputDecoration(
               labelText: 'Enter video url',
               floatingLabelBehavior: FloatingLabelBehavior.always,
-              hintText:
-                  'https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4',
+              hintText: 'https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4',
               border: OutlineInputBorder(),
             ),
           ),

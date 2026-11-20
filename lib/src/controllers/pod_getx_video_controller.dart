@@ -1,9 +1,8 @@
 import 'dart:async';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:universal_html/html.dart' as uni_html;
 
@@ -92,9 +91,8 @@ class PodGetXVideoController extends _PodGesturesController {
 
       update(['update-all']);
       unawaited(
-        Future<void>.delayed(
-          const Duration(milliseconds: 600),
-        ).then((_) => _isWebAutoPlayDone = true),
+        Future<void>.delayed(const Duration(milliseconds: 600))
+            .then((_) => _isWebAutoPlayDone = true),
       );
     } catch (e) {
       podVideoStateChanger(PodVideoState.error);

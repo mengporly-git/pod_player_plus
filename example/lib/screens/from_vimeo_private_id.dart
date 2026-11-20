@@ -1,7 +1,7 @@
 import 'dart:async';
 
+import 'package:material_ui/material_ui.dart';
 import 'package:pod_player_plus/pod_player_plus.dart';
-import 'package:flutter/material.dart';
 
 class PlayVideoFromVimeoPrivateId extends StatefulWidget {
   const PlayVideoFromVimeoPrivateId({super.key});

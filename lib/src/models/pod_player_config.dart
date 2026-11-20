@@ -10,7 +10,7 @@ class PodPlayerConfig {
   /// Default value is [1080, 720, 360]
   final List<int> videoQualityPriority;
 
-  const PodPlayerConfig({
+  const new({
     this.autoPlay = true,
     this.isLooping = false,
     this.forcedVideoFocus = false,

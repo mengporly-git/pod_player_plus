@@ -1,5 +1,5 @@
 <h1 align="center">
-  <a href="https://github.com/mengporly-git/pod_player_plus"><img src="https://user-images.githubusercontent.com/85326522/159757765-db86f850-fea8-4dc2-bd86-0a27648b24e5.png" alt="pod_player_plus"></a>
+  <a href="https://github.com/mengporly-git/pod_player_plus"><img src="https://raw.githubusercontent.com/mengporly-git/pod_player_plus/master/screenshots/logo.png?v=0.4.1" alt="pod player plus" width="360"></a>
 </h1>
 
 <p align="center">
@@ -149,6 +149,12 @@ dependencies:
   pod_player_plus: <latest_version>
 ```
 
+Starting with 0.4.0, `pod_player_plus` requires Flutter 3.47 and Dart 3.13 or
+newer. Add `material_ui` to your app dependencies and import
+`package:material_ui/material_ui.dart` for your `MaterialApp` so the player
+controls can use its theme and localizations. See the
+[Flutter migration guide](https://docs.flutter.dev/release/breaking-changes/material-ui-and-cupertino-ui).
+
 ### Android
 
 ---
@@ -215,7 +221,7 @@ fluttercors --disable
 
 ```dart
 import 'package:pod_player_plus/pod_player_plus.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 class PlayVideoFromNetwork extends StatefulWidget {
   const PlayVideoFromNetwork({Key? key}) : super(key: key);
@@ -308,7 +314,7 @@ Widget build(BuildContext context) {
 
 ```dart
 import 'package:pod_player_plus/pod_player_plus.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 class PlayVideoFromYoutube extends StatefulWidget {
   const PlayVideoFromYoutube({Key? key}) : super(key: key);
@@ -380,7 +386,7 @@ using `PlayVideoFrom.vimeoPrivateVideos` with authorized Vimeo API headers.
 
 ```dart
 import 'package:pod_player_plus/pod_player_plus.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 class PlayVideoFromVimeo extends StatefulWidget {
   const PlayVideoFromVimeo({Key? key}) : super(key: key);
@@ -422,7 +428,7 @@ class _PlayVideoFromVimeoState extends State<PlayVideoFromVimeo> {
 
 ```dart
 import 'package:pod_player_plus/pod_player_plus.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 class PlayVideoFromVimeo extends StatefulWidget {
   const PlayVideoFromVimeo({Key? key}) : super(key: key);
@@ -464,7 +470,7 @@ class _PlayVideoFromVimeoState extends State<PlayVideoFromVimeo> {
 
 ```dart
 import 'package:pod_player_plus/pod_player_plus.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 class PlayVideoFromVimeoPrivateVideo extends StatefulWidget {
   const PlayVideoFromVimeoPrivateVideo({Key? key}) : super(key: key);

@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:universal_html/html.dart' as uni_html;
 
@@ -20,7 +20,7 @@ class PodPlayerController {
   final PodPlayerConfig podPlayerConfig;
 
   /// controller for pod player
-  PodPlayerController({
+  new({
     required this.playVideoFrom,
     this.podPlayerConfig = const PodPlayerConfig(),
   }) {
@@ -31,10 +31,7 @@ class PodPlayerController {
     getTag = UniqueKey().toString();
     Get.config(enableLog: PodVideoPlayer.enableGetxLogs);
     _ctr = Get.put(PodGetXVideoController(), permanent: true, tag: getTag)
-      ..config(
-        playVideoFrom: playVideoFrom,
-        playerConfig: podPlayerConfig,
-      );
+      ..config(playVideoFrom: playVideoFrom, playerConfig: podPlayerConfig);
   }
 
   /// Initializes the video player.
@@ -150,10 +147,10 @@ class PodPlayerController {
   //! volume Controllers
 
   /// mute the volume of the video
-  Future<void> mute() async => _ctr.mute();
+  Future<void> mute() => _ctr.mute();
 
   /// unmute the volume of the video
-  Future<void> unMute() async => _ctr.unMute();
+  Future<void> unMute() => _ctr.unMute();
 
   /// toggle the volume
   Future<void> toggleVolume() async {
@@ -165,12 +162,7 @@ class PodPlayerController {
     _isCtrInitialised = false;
     unawaited(_ctr.disposePlaybackControllers());
     _ctr.removeListenerId('podVideoState', _ctr.podStateListner);
-    unawaited(
-      Get.delete<PodGetXVideoController>(
-        force: true,
-        tag: getTag,
-      ),
-    );
+    unawaited(Get.delete<PodGetXVideoController>(force: true, tag: getTag));
     podLog('$getTag Pod player Disposed');
   }
 
@@ -191,21 +183,21 @@ class PodPlayerController {
   Future<void> videoSeekTo(Duration moment) async {
     await _checkAndWaitTillInitialized();
     if (!_isCtrInitialised) return;
-    return _ctr.seekTo(moment);
+    await _ctr.seekTo(moment);
   }
 
   ///Moves video forward from current duration to `_duration`
   Future<void> videoSeekForward(Duration duration) async {
     await _checkAndWaitTillInitialized();
     if (!_isCtrInitialised) return;
-    return _ctr.seekForward(duration);
+    await _ctr.seekForward(duration);
   }
 
   ///Moves video backward from current duration to `_duration`
   Future<void> videoSeekBackward(Duration duration) async {
     await _checkAndWaitTillInitialized();
     if (!_isCtrInitialised) return;
-    return _ctr.seekBackward(duration);
+    await _ctr.seekBackward(duration);
   }
 
   ///on right double tap

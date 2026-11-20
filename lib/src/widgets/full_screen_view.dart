@@ -2,10 +2,7 @@ part of 'package:pod_player_plus/src/pod_player.dart';
 
 class FullScreenView extends StatefulWidget {
   final String tag;
-  const FullScreenView({
-    required this.tag,
-    super.key,
-  });
+  const new({required this.tag, super.key});
 
   @override
   State<FullScreenView> createState() => _FullScreenViewState();
@@ -44,11 +41,7 @@ class _FullScreenViewState extends State<FullScreenView>
       onPopInvokedWithResult: (didPop, result) {
         if (didPop) {
           unawaited(
-            _podCtr.disableFullScreen(
-              context,
-              widget.tag,
-              enablePop: false,
-            ),
+            _podCtr.disableFullScreen(context, widget.tag, enablePop: false),
           );
         }
       },

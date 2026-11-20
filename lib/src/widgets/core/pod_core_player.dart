@@ -5,7 +5,7 @@ class _PodCoreVideoPlayer extends StatelessWidget {
   final double videoAspectRatio;
   final String tag;
 
-  const _PodCoreVideoPlayer({
+  const new({
     required this.videoPlayerCtr,
     required this.videoAspectRatio,
     required this.tag,
@@ -21,11 +21,8 @@ class _PodCoreVideoPlayer extends StatelessWidget {
           focusNode:
               (podCtr.isFullScreen ? FocusNode() : podCtr.keyboardFocusWeb) ??
               FocusNode(),
-          onKeyEvent: (value) => podCtr.onKeyBoardEvents(
-            event: value,
-            appContext: ctrx,
-            tag: tag,
-          ),
+          onKeyEvent: (value) =>
+              podCtr.onKeyBoardEvents(event: value, appContext: ctrx, tag: tag),
           child: Stack(
             fit: StackFit.expand,
             children: [
@@ -51,16 +48,12 @@ class _PodCoreVideoPlayer extends StatelessWidget {
                         podCtr.videoPosition == Duration.zero) {
                       return SizedBox.expand(
                         child: TweenAnimationBuilder<double>(
-                          builder: (context, value, child) => Opacity(
-                            opacity: value,
-                            child: child,
-                          ),
+                          builder: (context, value, child) =>
+                              Opacity(opacity: value, child: child),
                           tween: Tween<double>(begin: 0.7, end: 1),
                           duration: const Duration(milliseconds: 400),
                           child: DecoratedBox(
-                            decoration: BoxDecoration(
-                              image: thumbnail,
-                            ),
+                            decoration: BoxDecoration(image: thumbnail),
                           ),
                         ),
                       );
@@ -100,10 +93,8 @@ class _PodCoreVideoPlayer extends StatelessWidget {
                         case PodVideoState.playing:
                           return Center(
                             child: TweenAnimationBuilder<double>(
-                              builder: (context, value, child) => Opacity(
-                                opacity: value,
-                                child: child,
-                              ),
+                              builder: (context, value, child) =>
+                                  Opacity(opacity: value, child: child),
                               tween: Tween<double>(begin: 1, end: 0),
                               duration: const Duration(seconds: 1),
                               child: const Icon(

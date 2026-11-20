@@ -3,11 +3,7 @@ class VideoQalityUrls {
   String url;
   String? audioUrl;
 
-  VideoQalityUrls({
-    required this.quality,
-    required this.url,
-    this.audioUrl,
-  });
+  new({required this.quality, required this.url, this.audioUrl});
 
   @override
   String toString() =>
@@ -16,10 +12,7 @@ class VideoQalityUrls {
 }
 
 class VimeoApiException implements Exception {
-  const VimeoApiException({
-    required this.message,
-    this.statusCode,
-  });
+  const new({required this.message, this.statusCode});
 
   final String message;
   final int? statusCode;

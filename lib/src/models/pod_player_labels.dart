@@ -14,7 +14,7 @@ class PodPlayerLabels {
   final String error;
 
   /// Labels displayed in the video player progress bar and when an error occurs
-  const PodPlayerLabels({
+  const new({
     this.play,
     this.pause,
     this.mute,

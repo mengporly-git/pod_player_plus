@@ -1,8 +1,8 @@
 import 'dart:developer';
 
-import 'package:pod_player_plus/pod_player_plus.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
+import 'package:pod_player_plus/pod_player_plus.dart';
 
 class CustomVideoControlls extends StatefulWidget {
   const CustomVideoControlls({super.key});
@@ -15,8 +15,7 @@ class _CustomVideoControllsState extends State<CustomVideoControlls> {
   late PodPlayerController controller;
   bool? isVideoPlaying;
   final videoTextFieldCtr = TextEditingController(
-    text:
-        'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4',
+    text: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4',
   );
   final vimeoTextFieldCtr = TextEditingController(text: '518228118');
   final youtubeTextFieldCtr = TextEditingController(

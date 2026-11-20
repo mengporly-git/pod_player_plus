@@ -1,3 +1,15 @@
+## 0.4.1
+
+- Update the README and pub.dev package page with the new pod player plus logo.
+
+## 0.4.0
+
+- Migrate the player and example to Flutter's standalone `material_ui` package
+  and resolve Flutter 3.50 static analysis diagnostics.
+- **Breaking:** Requires Flutter 3.47 or newer and Dart 3.13 or newer. Use a
+  `MaterialApp` from `material_ui` to provide the theme and localizations for
+  the player controls.
+
 ## 0.3.2
 
 - Correct doubled iOS YouTube durations using stream metadata, including seek

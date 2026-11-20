@@ -1,7 +1,7 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../controllers/pod_getx_video_controller.dart';
 import 'doubble_tap_effect.dart';
@@ -14,7 +14,7 @@ class DoubleTapIcon extends StatefulWidget {
   final double height;
   final double? width;
 
-  const DoubleTapIcon({
+  const new({
     required this.onDoubleTap,
     required this.tag,
     required this.isForward,
@@ -41,10 +41,7 @@ class _DoubleTapIconState extends State<DoubleTapIcon>
       duration: const Duration(milliseconds: 200),
     );
     opacityCtr = Tween<double>(begin: 0, end: 1).animate(
-      CurvedAnimation(
-        parent: _animationController,
-        curve: Curves.easeInOut,
-      ),
+      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
     );
     final podCtr = Get.find<PodGetXVideoController>(tag: widget.tag);
     if (widget.iconOnly && !widget.isForward) {
@@ -73,7 +70,7 @@ class _DoubleTapIconState extends State<DoubleTapIcon>
     widget.onDoubleTap();
     unawaited(
       _animationController.forward().then((_) {
-        unawaited(_animationController.reverse());
+        _animationController.reverse();
       }),
     );
   }

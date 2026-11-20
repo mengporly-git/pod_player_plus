@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:get/instance_manager.dart';
 import 'package:video_player/video_player.dart';
@@ -10,7 +10,7 @@ import '../models/pod_progress_bar_config.dart';
 
 /// Renders progress bar for the video using custom paint.
 class PodProgressBar extends StatefulWidget {
-  const PodProgressBar({
+  const new({
     required this.tag,
     super.key,
     PodProgressBarConfig? podProgressBarConfig,
@@ -150,7 +150,7 @@ class _PodProgressBarState extends State<PodProgressBar> {
 }
 
 class _ProgressBarPainter extends CustomPainter {
-  _ProgressBarPainter(this.value, {this.podProgressBarConfig});
+  new(this.value, {this.podProgressBarConfig});
 
   VideoPlayerValue value;
   PodProgressBarConfig? podProgressBarConfig;
@@ -179,10 +179,7 @@ class _ProgressBarPainter extends CustomPainter {
 
     canvas.drawRRect(
       RRect.fromRectAndRadius(
-        Rect.fromPoints(
-          Offset.zero,
-          Offset(width, height),
-        ),
+        Rect.fromPoints(Offset.zero, Offset(width, height)),
         Radius.circular(curveRadius),
       ),
       backgroundPaint,
@@ -216,10 +213,7 @@ class _ProgressBarPainter extends CustomPainter {
 
       canvas.drawRRect(
         RRect.fromRectAndRadius(
-          Rect.fromPoints(
-            Offset(start, 0),
-            Offset(end, height),
-          ),
+          Rect.fromPoints(Offset(start, 0), Offset(end, height)),
           Radius.circular(curveRadius),
         ),
         bufferedPaint,
@@ -238,10 +232,7 @@ class _ProgressBarPainter extends CustomPainter {
           ..color = podProgressBarConfig!.playingBarColor;
     canvas.drawRRect(
       RRect.fromRectAndRadius(
-        Rect.fromPoints(
-          Offset.zero,
-          Offset(playedPart, height),
-        ),
+        Rect.fromPoints(Offset.zero, Offset(playedPart, height)),
         Radius.circular(curveRadius),
       ),
       playedPaint,

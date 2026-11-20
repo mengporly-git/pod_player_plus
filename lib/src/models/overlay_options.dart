@@ -13,7 +13,7 @@ class OverLayOptions {
   final List<String> videoPlayBackSpeeds;
   final PodVideoPlayerType videoPlayerType;
   final PodProgressBar podProgressBar;
-  OverLayOptions({
+  new({
     required this.podVideoState,
     required this.videoDuration,
     required this.videoPosition,

@@ -3,9 +3,7 @@ part of 'package:pod_player_plus/src/pod_player.dart';
 class _WebSettingsDropdown extends StatefulWidget {
   final String tag;
 
-  const _WebSettingsDropdown({
-    required this.tag,
-  });
+  const new({required this.tag});
 
   @override
   State<_WebSettingsDropdown> createState() => _WebSettingsDropdownState();
@@ -15,9 +13,7 @@ class _WebSettingsDropdownState extends State<_WebSettingsDropdown> {
   @override
   Widget build(BuildContext context) {
     return Theme(
-      data: Theme.of(context).copyWith(
-        focusColor: Colors.white,
-      ),
+      data: Theme.of(context).copyWith(focusColor: Colors.white),
       child: GetBuilder<PodGetXVideoController>(
         tag: widget.tag,
         builder: (podCtr) {
@@ -87,17 +83,13 @@ class _WebSettingsDropdownState extends State<_WebSettingsDropdown> {
     TapDownDetails details,
     PodGetXVideoController podCtr,
   ) async {
-    await Future<void>.delayed(
-      const Duration(milliseconds: 400),
-    );
+    await Future<void>.delayed(const Duration(milliseconds: 400));
     await showMenu(
       context: context,
       items: podCtr.videoPlaybackSpeeds
           .map(
             (e) => PopupMenuItem<dynamic>(
-              child: ListTile(
-                title: Text(e),
-              ),
+              child: ListTile(title: Text(e)),
               onTap: () {
                 unawaited(podCtr.setVideoPlayBack(e));
               },
@@ -116,23 +108,15 @@ class _WebSettingsDropdownState extends State<_WebSettingsDropdown> {
     TapDownDetails details,
     PodGetXVideoController podCtr,
   ) async {
-    await Future<void>.delayed(
-      const Duration(milliseconds: 400),
-    );
+    await Future<void>.delayed(const Duration(milliseconds: 400));
     await showMenu(
       context: context,
       items: podCtr.vimeoOrVideoUrls
           .map(
             (e) => PopupMenuItem<dynamic>(
-              child: ListTile(
-                title: Text('${e.quality}p'),
-              ),
+              child: ListTile(title: Text('${e.quality}p')),
               onTap: () {
-                unawaited(
-                  podCtr.changeVideoQuality(
-                    e.quality,
-                  ),
-                );
+                unawaited(podCtr.changeVideoQuality(e.quality));
               },
             ),
           )
@@ -159,9 +143,7 @@ class _WebSettingsDropdownState extends State<_WebSettingsDropdown> {
           children: [
             Icon(icon),
             const SizedBox(width: 20),
-            Text(
-              title,
-            ),
+            Text(title),
             if (subText != null) const SizedBox(width: 10),
             if (subText != null)
               const SizedBox(
@@ -176,10 +158,7 @@ class _WebSettingsDropdownState extends State<_WebSettingsDropdown> {
               ),
             if (subText != null) const SizedBox(width: 6),
             if (subText != null)
-              Text(
-                subText,
-                style: const TextStyle(color: Colors.grey),
-              ),
+              Text(subText, style: const TextStyle(color: Colors.grey)),
           ],
         ),
       ),

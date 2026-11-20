@@ -3,9 +3,7 @@ part of 'package:pod_player_plus/src/pod_player.dart';
 class _MobileBottomSheet extends StatelessWidget {
   final String tag;
 
-  const _MobileBottomSheet({
-    required this.tag,
-  });
+  const new({required this.tag});
 
   @override
   Widget build(BuildContext context) {
@@ -22,15 +20,10 @@ class _MobileBottomSheet extends StatelessWidget {
               onTap: () {
                 Navigator.of(context).pop();
                 Timer(const Duration(milliseconds: 100), () {
-                  unawaited(
-                    showModalBottomSheet<void>(
-                      context: context,
-                      builder: (context) => SafeArea(
-                        child: _VideoQualitySelectorMob(
-                          tag: tag,
-                          onTap: null,
-                        ),
-                      ),
+                  showModalBottomSheet<void>(
+                    context: context,
+                    builder: (context) => SafeArea(
+                      child: _VideoQualitySelectorMob(tag: tag, onTap: null),
                     ),
                   );
                 });
@@ -57,16 +50,11 @@ class _MobileBottomSheet extends StatelessWidget {
             onTap: () {
               Navigator.of(context).pop();
               Timer(const Duration(milliseconds: 100), () {
-                unawaited(
-                  showModalBottomSheet<void>(
-                    context: context,
-                    isScrollControlled: true,
-                    builder: (context) => SafeArea(
-                      child: _VideoPlaybackSelectorMob(
-                        tag: tag,
-                        onTap: null,
-                      ),
-                    ),
+                showModalBottomSheet<void>(
+                  context: context,
+                  isScrollControlled: true,
+                  builder: (context) => SafeArea(
+                    child: _VideoPlaybackSelectorMob(tag: tag, onTap: null),
                   ),
                 );
               });
@@ -91,9 +79,7 @@ class _MobileBottomSheet extends StatelessWidget {
         alignment: Alignment.centerLeft,
         child: Row(
           children: [
-            Text(
-              title,
-            ),
+            Text(title),
             if (subText != null) const SizedBox(width: 6),
             if (subText != null)
               const SizedBox(
@@ -108,10 +94,7 @@ class _MobileBottomSheet extends StatelessWidget {
               ),
             if (subText != null) const SizedBox(width: 6),
             if (subText != null)
-              Text(
-                subText,
-                style: const TextStyle(color: Colors.grey),
-              ),
+              Text(subText, style: const TextStyle(color: Colors.grey)),
           ],
         ),
       ),
@@ -123,10 +106,7 @@ class _VideoQualitySelectorMob extends StatelessWidget {
   final void Function()? onTap;
   final String tag;
 
-  const _VideoQualitySelectorMob({
-    required this.onTap,
-    required this.tag,
-  });
+  const new({required this.onTap, required this.tag});
 
   @override
   Widget build(BuildContext context) {
@@ -155,10 +135,7 @@ class _VideoPlaybackSelectorMob extends StatelessWidget {
   final void Function()? onTap;
   final String tag;
 
-  const _VideoPlaybackSelectorMob({
-    required this.onTap,
-    required this.tag,
-  });
+  const new({required this.onTap, required this.tag});
 
   @override
   Widget build(BuildContext context) {
@@ -185,9 +162,7 @@ class _VideoPlaybackSelectorMob extends StatelessWidget {
 class _MobileOverlayBottomControlles extends StatelessWidget {
   final String tag;
 
-  const _MobileOverlayBottomControlles({
-    required this.tag,
-  });
+  const new({required this.tag});
 
   @override
   Widget build(BuildContext context) {
@@ -213,10 +188,7 @@ class _MobileOverlayBottomControlles extends StatelessWidget {
                         podCtr.calculateVideoDuration(podCtr.videoPosition),
                         style: const TextStyle(color: itemColor),
                       ),
-                      const Text(
-                        ' / ',
-                        style: durationTextStyle,
-                      ),
+                      const Text(' / ', style: durationTextStyle),
                       Text(
                         podCtr.calculateVideoDuration(podCtr.videoDuration),
                         style: durationTextStyle,

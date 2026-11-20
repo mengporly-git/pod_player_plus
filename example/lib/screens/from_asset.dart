@@ -1,5 +1,5 @@
+import 'package:material_ui/material_ui.dart';
 import 'package:pod_player_plus/pod_player_plus.dart';
-import 'package:flutter/material.dart';
 
 class PlayVideoFromAsset extends StatefulWidget {
   const PlayVideoFromAsset({super.key});

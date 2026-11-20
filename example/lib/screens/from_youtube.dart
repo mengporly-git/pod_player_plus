@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:pod_player_plus/pod_player_plus.dart';
 
 class PlayVideoFromYoutube extends StatefulWidget {
@@ -15,7 +15,9 @@ class _PlayVideoFromVimeoIdState extends State<PlayVideoFromYoutube> {
   @override
   void initState() {
     controller = PodPlayerController(
-      playVideoFrom: PlayVideoFrom.youtube('https://www.youtube.com/watch?v=0jSgcE-sxeo'),
+      playVideoFrom: PlayVideoFrom.youtube(
+        'https://www.youtube.com/watch?v=0jSgcE-sxeo',
+      ),
       podPlayerConfig: const PodPlayerConfig(
         videoQualityPriority: [1080, 720, 360],
         autoPlay: false,

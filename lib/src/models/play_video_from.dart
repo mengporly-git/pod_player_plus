@@ -15,7 +15,7 @@ class PlayVideoFrom {
   final Map<String, String> httpHeaders;
   final bool live;
 
-  const PlayVideoFrom._({
+  const new _({
     required this.playerType,
     this.live = false,
     this.dataSource,
@@ -29,7 +29,7 @@ class PlayVideoFrom {
     this.httpHeaders = const {},
   });
 
-  factory PlayVideoFrom.network(
+  factory network(
     String dataSource, {
     VideoFormat? formatHint,
     Future<ClosedCaptionFile>? closedCaptionFile,
@@ -46,7 +46,7 @@ class PlayVideoFrom {
     );
   }
 
-  factory PlayVideoFrom.asset(
+  factory asset(
     String dataSource, {
     String? package,
     Future<ClosedCaptionFile>? closedCaptionFile,
@@ -63,7 +63,7 @@ class PlayVideoFrom {
 
   ///File Doesnot support web apps
   ///[file] is `File` Datatype import it from `dart:io`
-  factory PlayVideoFrom.file(
+  factory file(
     File file, {
     Future<ClosedCaptionFile>? closedCaptionFile,
     VideoPlayerOptions? videoPlayerOptions,
@@ -76,7 +76,7 @@ class PlayVideoFrom {
     );
   }
 
-  factory PlayVideoFrom.vimeo(
+  factory vimeo(
     String dataSource, {
     String? hash,
     VideoFormat? formatHint,
@@ -95,7 +95,7 @@ class PlayVideoFrom {
     );
   }
 
-  factory PlayVideoFrom.vimeoPrivateVideos(
+  factory vimeoPrivateVideos(
     String dataSource, {
     VideoFormat? formatHint,
     Future<ClosedCaptionFile>? closedCaptionFile,
@@ -111,7 +111,7 @@ class PlayVideoFrom {
       httpHeaders: httpHeaders,
     );
   }
-  factory PlayVideoFrom.youtube(
+  factory youtube(
     String dataSource, {
     bool live = false,
     VideoFormat? formatHint,
@@ -129,7 +129,7 @@ class PlayVideoFrom {
       httpHeaders: httpHeaders,
     );
   }
-  factory PlayVideoFrom.networkQualityUrls({
+  factory networkQualityUrls({
     required List<VideoQalityUrls> videoUrls,
     VideoFormat? formatHint,
     Future<ClosedCaptionFile>? closedCaptionFile,

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:pod_player_plus/pod_player_plus.dart';
 
 void main(List<String> args) {

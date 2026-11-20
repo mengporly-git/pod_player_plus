@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 class DoubleTapRippleEffect extends StatefulWidget {
   /// child widget [child]
@@ -33,7 +33,7 @@ class DoubleTapRippleEffect extends StatefulWidget {
   /// TouchRippleEffect widget height size [height]
   final double? height;
 
-  const DoubleTapRippleEffect({
+  const new({
     super.key,
     this.child,
     this.wrapper,
@@ -139,8 +139,9 @@ class _DoubleTapRippleEffectState extends State<DoubleTapRippleEffect>
     _anim = _tweenAnim.animate(_animationController);
 
     // Resetting [_animationController] before starting the animation.
-    _animationController.reset();
-    unawaited(_animationController.forward());
+    _animationController
+      ..reset()
+      ..forward();
   }
 
   @override
@@ -218,7 +219,7 @@ class RipplePainer extends CustomPainter {
 
   // fill color of ripple [fillColor]
   final Color? fillColor;
-  RipplePainer({this.offset, this.circleRadius, this.fillColor});
+  new({this.offset, this.circleRadius, this.fillColor});
 
   @override
   void paint(Canvas canvas, Size size) {

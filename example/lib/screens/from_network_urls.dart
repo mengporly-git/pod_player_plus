@@ -1,6 +1,6 @@
-import 'package:pod_player_plus/pod_player_plus.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
+import 'package:pod_player_plus/pod_player_plus.dart';
 
 class PlayVideoFromNetworkQualityUrls extends StatefulWidget {
   const PlayVideoFromNetworkQualityUrls({super.key});
@@ -19,13 +19,11 @@ class _PlayVideoFromAssetState extends State<PlayVideoFromNetworkQualityUrls> {
         videoUrls: [
           VideoQalityUrls(
             quality: 360,
-            url:
-                'https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4',
+            url: 'https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4',
           ),
           VideoQalityUrls(
             quality: 720,
-            url:
-                'https://flutter.github.io/assets-for-api-docs/assets/videos/butterfly.mp4',
+            url: 'https://flutter.github.io/assets-for-api-docs/assets/videos/butterfly.mp4',
           ),
         ],
       ),

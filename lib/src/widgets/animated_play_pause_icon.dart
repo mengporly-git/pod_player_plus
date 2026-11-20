@@ -4,10 +4,7 @@ class _AnimatedPlayPauseIcon extends StatefulWidget {
   final double? size;
   final String tag;
 
-  const _AnimatedPlayPauseIcon({
-    required this.tag,
-    this.size,
-  });
+  const new({required this.tag, this.size});
 
   @override
   State<_AnimatedPlayPauseIcon> createState() => _AnimatedPlayPauseIconState();
@@ -26,7 +23,7 @@ class _AnimatedPlayPauseIconState extends State<_AnimatedPlayPauseIcon>
     );
     _podCtr.addListenerId('podVideoState', playPauseListner);
     if (_podCtr.isvideoPlaying) {
-      if (mounted) unawaited(_payCtr.forward());
+      if (mounted) _payCtr.forward();
     }
     super.initState();
   }
@@ -34,10 +31,10 @@ class _AnimatedPlayPauseIconState extends State<_AnimatedPlayPauseIcon>
   void playPauseListner() {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       if (_podCtr.podVideoState == PodVideoState.playing) {
-        if (mounted) unawaited(_payCtr.forward());
+        if (mounted) _payCtr.forward();
       }
       if (_podCtr.podVideoState == PodVideoState.paused) {
-        if (mounted) unawaited(_payCtr.reverse());
+        if (mounted) _payCtr.reverse();
       }
     });
   }

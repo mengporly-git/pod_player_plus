@@ -1,9 +1,4 @@
-enum PodVideoState {
-  loading,
-  playing,
-  paused,
-  error,
-}
+enum PodVideoState { loading, playing, paused, error }
 
 enum PodVideoPlayerType {
   network,

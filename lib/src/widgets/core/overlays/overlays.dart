@@ -3,9 +3,7 @@ part of 'package:pod_player_plus/src/pod_player.dart';
 class _VideoOverlays extends StatelessWidget {
   final String tag;
 
-  const _VideoOverlays({
-    required this.tag,
-  });
+  const new({required this.tag});
 
   @override
   Widget build(BuildContext context) {

@@ -1,9 +1,9 @@
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:universal_html/html.dart' as uni_html;
 
 import '../pod_player_plus.dart';
@@ -49,7 +49,7 @@ class PodVideoPlayer extends StatefulWidget {
   /// If no widget is informed, a default [CircularProgressIndicator] will be shown.
   final WidgetBuilder? onLoading;
 
-  PodVideoPlayer({
+  new({
     required this.controller,
     super.key,
     this.frameAspectRatio = 16 / 9,
@@ -156,11 +156,7 @@ class _PodVideoPlayerState extends State<PodVideoPlayer>
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(
-              Icons.warning,
-              color: Colors.yellow,
-              size: 32,
-            ),
+            const Icon(Icons.warning, color: Colors.yellow, size: 32),
             const SizedBox(height: 20),
             Text(
               widget.podPlayerLabels.error,
@@ -219,17 +215,13 @@ class _PodVideoPlayerState extends State<PodVideoPlayer>
 
     return SizedBox.expand(
       child: TweenAnimationBuilder<double>(
-        builder: (context, value, child) => Opacity(
-          opacity: value,
-          child: child,
-        ),
+        builder: (context, value, child) =>
+            Opacity(opacity: value, child: child),
         tween: Tween<double>(begin: 0.2, end: 0.7),
         duration: const Duration(milliseconds: 400),
         child: DecoratedBox(
           decoration: BoxDecoration(image: thumbnail),
-          child: Center(
-            child: _buildLoading(),
-          ),
+          child: Center(child: _buildLoading()),
         ),
       ),
     );

@@ -6,12 +6,7 @@ class _VideoGestureDetector extends StatelessWidget {
   final void Function()? onTap;
   final String tag;
 
-  const _VideoGestureDetector({
-    required this.tag,
-    this.child,
-    this.onDoubleTap,
-    this.onTap,
-  });
+  const new({required this.tag, this.child, this.onDoubleTap, this.onTap});
 
   @override
   Widget build(BuildContext context) {

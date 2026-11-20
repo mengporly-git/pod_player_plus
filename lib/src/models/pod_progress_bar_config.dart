@@ -1,40 +1,36 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
-typedef GetProgressBarBackgroundPaint =
-    Paint Function({
-      double? width,
-      double? height,
-      double? circleHandlerRadius,
-    });
+typedef GetProgressBarBackgroundPaint = Paint Function({
+  double? width,
+  double? height,
+  double? circleHandlerRadius,
+});
 
-typedef GetProgressBarPlayedPaint =
-    Paint Function({
-      double? width,
-      double? height,
-      double? playedPart,
-      double? circleHandlerRadius,
-    });
+typedef GetProgressBarPlayedPaint = Paint Function({
+  double? width,
+  double? height,
+  double? playedPart,
+  double? circleHandlerRadius,
+});
 
-typedef GetProgressBarBufferedPaint =
-    Paint Function({
-      double? width,
-      double? height,
-      double? playedPart,
-      double? circleHandlerRadius,
-      double? bufferedStart,
-      double? bufferedEnd,
-    });
+typedef GetProgressBarBufferedPaint = Paint Function({
+  double? width,
+  double? height,
+  double? playedPart,
+  double? circleHandlerRadius,
+  double? bufferedStart,
+  double? bufferedEnd,
+});
 
-typedef GetProgressBarHandlePaint =
-    Paint Function({
-      double? width,
-      double? height,
-      double? playedPart,
-      double? circleHandlerRadius,
-    });
+typedef GetProgressBarHandlePaint = Paint Function({
+  double? width,
+  double? height,
+  double? playedPart,
+  double? circleHandlerRadius,
+});
 
 class PodProgressBarConfig {
-  const PodProgressBarConfig({
+  const new({
     this.playingBarColor = Colors.red,
     this.bufferedBarColor = const Color.fromRGBO(255, 255, 255, 0.38),
     this.circleHandlerColor = Colors.red,

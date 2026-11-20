@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
+
 import '../models/vimeo_models.dart';
 
 String podErrorString(String val) {
@@ -92,12 +93,7 @@ class VideoApis {
 
     final fallbackUrl = _getVimeoAdaptiveFallback(files);
     if (fallbackUrl != null) {
-      return [
-        VideoQalityUrls(
-          quality: 720,
-          url: fallbackUrl,
-        ),
-      ];
+      return [VideoQalityUrls(quality: 720, url: fallbackUrl)];
     }
 
     throw const VimeoApiException(
@@ -120,12 +116,7 @@ class VideoApis {
     }
 
     return urlsByQuality.entries
-        .map(
-          (entry) => VideoQalityUrls(
-            quality: entry.key,
-            url: entry.value,
-          ),
-        )
+        .map((entry) => VideoQalityUrls(quality: entry.key, url: entry.value))
         .toList()
       ..sort((a, b) => a.quality.compareTo(b.quality));
   }

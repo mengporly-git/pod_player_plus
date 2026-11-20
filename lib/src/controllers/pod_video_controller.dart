@@ -125,9 +125,7 @@ class _PodVideoController extends _PodUiController {
 
   // Set volume between 0.0 - 1.0,
   /// 0.0 is mute and 1.0 max volume.
-  Future<void> setVolume(
-    double volume,
-  ) async {
+  Future<void> setVolume(double volume) async {
     await Future.wait([
       if (_videoCtr != null) _videoCtr!.setVolume(volume),
       if (_audioCtr != null) _audioCtr!.setVolume(volume),
@@ -354,12 +352,10 @@ class _PodVideoController extends _PodUiController {
         await onToggleFullScreen!(true);
       } else {
         await Future.wait([
-          SystemChrome.setPreferredOrientations(
-            [
-              if (!kIsWeb) DeviceOrientation.landscapeLeft,
-              DeviceOrientation.landscapeRight,
-            ],
-          ),
+          SystemChrome.setPreferredOrientations([
+            if (!kIsWeb) DeviceOrientation.landscapeLeft,
+            DeviceOrientation.landscapeRight,
+          ]),
           SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky),
         ]);
       }
@@ -414,22 +410,14 @@ class _PodVideoController extends _PodUiController {
     if (!isFullScreen) {
       podLog('full-screen-enabled');
 
-      unawaited(
-        Navigator.push(
-          mainContext,
-          PageRouteBuilder<dynamic>(
-            fullscreenDialog: true,
-            pageBuilder: (context, _, _) => FullScreenView(
-              tag: tag,
-            ),
-            reverseTransitionDuration: const Duration(milliseconds: 400),
-            transitionsBuilder:
-                (context, animation, secondaryAnimation, child) =>
-                    FadeTransition(
-                      opacity: animation,
-                      child: child,
-                    ),
-          ),
+      Navigator.push(
+        mainContext,
+        PageRouteBuilder<dynamic>(
+          fullscreenDialog: true,
+          pageBuilder: (context, _, _) => FullScreenView(tag: tag),
+          reverseTransitionDuration: const Duration(milliseconds: 400),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) =>
+              FadeTransition(opacity: animation, child: child),
         ),
       );
     }

@@ -2,9 +2,7 @@ part of 'package:pod_player_plus/src/pod_player.dart';
 
 class _WebOverlay extends StatelessWidget {
   final String tag;
-  const _WebOverlay({
-    required this.tag,
-  });
+  const new({required this.tag});
 
   @override
   Widget build(BuildContext context) {
@@ -25,9 +23,7 @@ class _WebOverlay extends StatelessWidget {
         ),
         Align(
           alignment: Alignment.bottomLeft,
-          child: _WebOverlayBottomControlles(
-            tag: tag,
-          ),
+          child: _WebOverlayBottomControlles(tag: tag),
         ),
         Positioned.fill(
           child: GetBuilder<PodGetXVideoController>(
@@ -70,9 +66,7 @@ class _WebOverlay extends StatelessWidget {
 class _WebOverlayBottomControlles extends StatelessWidget {
   final String tag;
 
-  const _WebOverlayBottomControlles({
-    required this.tag,
-  });
+  const new({required this.tag});
 
   @override
   Widget build(BuildContext context) {
@@ -132,10 +126,7 @@ class _WebOverlayBottomControlles extends StatelessWidget {
                                   ),
                                   style: durationTextStyle,
                                 ),
-                                const Text(
-                                  ' / ',
-                                  style: durationTextStyle,
-                                ),
+                                const Text(' / ', style: durationTextStyle),
                                 Text(
                                   podCtr.calculateVideoDuration(
                                     podCtr.videoDuration,

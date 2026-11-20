@@ -1,5 +1,5 @@
 <h1 align="center">
-  <a href="https://github.com/mengporly-git/pod_player_plus"><img src="https://user-images.githubusercontent.com/85326522/159757765-db86f850-fea8-4dc2-bd86-0a27648b24e5.png" alt="pod_player_plus"></a>
+  <a href="https://github.com/mengporly-git/pod_player_plus"><img src="https://raw.githubusercontent.com/mengporly-git/pod_player_plus/master/screenshots/logo.png?v=0.4.1" alt="pod player plus" width="360"></a>
 </h1>
 
 <p align="center">
